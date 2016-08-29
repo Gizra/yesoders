@@ -1,5 +1,5 @@
-module Handler.Root
-    ( getRootR
+module Handler.Home
+    ( getHomeR
     ) where
 
 import Import
@@ -10,8 +10,9 @@ import System.Random (newStdGen)
 import System.Random.Shuffle (shuffle')
 import Yesod.Form.Jquery
 
-getRootR :: Handler Html
-getRootR = do
+getHomeR :: Handler Html
+getHomeR = do
+    muser <- maybeAuthPair
     master <- getYesod
     (allProfs, len) <- liftIO . readIORef $ appHomepageProfiles master
     gen <- liftIO newStdGen

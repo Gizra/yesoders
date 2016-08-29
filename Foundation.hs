@@ -32,8 +32,7 @@ data App = App
 data Location = Location
     { locationLong :: Double
     , locationLat :: Double
-    }
-  deriving Show
+    } deriving (Show)
 
 data Profile = Profile
     { profileUserId :: UserId
@@ -43,8 +42,17 @@ data Profile = Profile
     , profileSkills :: Set.Set SkillId
     , profileUsername :: Maybe Username
     , profileLocation :: Maybe Location
+    } deriving (Show)
+
+data MenuItem = MenuItem
+    { menuItemLabel :: Text
+    , menuItemRoute :: Route App
+    , menuItemAccessCallback :: Bool
     }
-  deriving Show
+
+data MenuTypes
+    = NavbarLeft MenuItem
+    | NavbarRight MenuItem
 
 -- This is where we define all of the routes in our application. For a full
 -- explanation of the syntax, please see:
@@ -97,6 +105,39 @@ instance Yesod App where
         -- default-layout-wrapper is the entire page. Since the final
         -- value passed to hamletToRepHtml cannot be a widget, this allows
         -- you to use normal widget features in default-layout.
+
+        (title, parents) <- breadcrumbs
+        muser <- maybeAuthPair
+        mcurrentRoute <- getCurrentRoute
+
+        let menuItems =
+                [ NavbarLeft $ MenuItem
+                    { menuItemLabel = "Home"
+                    , menuItemRoute = HomeR
+                    , menuItemAccessCallback = True
+                    }
+                  , NavbarLeft $ MenuItem
+                    { menuItemLabel = "Your Profile"
+                    , menuItemRoute = ProfileR
+                    , menuItemAccessCallback = isJust muser
+                    }
+                  , NavbarRight $ MenuItem
+                    { menuItemLabel = "Login"
+                    , menuItemRoute = AuthR LoginR
+                    , menuItemAccessCallback = isNothing muser
+                    }
+                  , NavbarRight $ MenuItem
+                    { menuItemLabel = "Logout"
+                    , menuItemRoute = AuthR LogoutR
+                    , menuItemAccessCallback = isJust muser
+                    }
+                  ]
+
+        let navbarLeftMenuItems = [x | NavbarLeft x <- menuItems]
+        let navbarRightMenuItems = [x | NavbarRight x <- menuItems]
+
+        let navbarLeftFilteredMenuItems = [x | x <- navbarLeftMenuItems, menuItemAccessCallback x]
+        let navbarRightFilteredMenuItems = [x | x <- navbarRightMenuItems, menuItemAccessCallback x]
 
         pc <- widgetToPageContent $ do
             -- Semantic UI
@@ -159,9 +200,9 @@ instance YesodAuth App where
     type AuthId App = UserId
 
     -- Where to send a user after successful login
-    loginDest _ = RootR
+    loginDest _ = HomeR
     -- Where to send a user after logout
-    logoutDest _ = RootR
+    logoutDest _ = HomeR
     -- Override the above two destinations when a Referer: header is present
     redirectToReferer _ = True
 
@@ -197,6 +238,11 @@ instance YesodAuth App where
     authPlugins _ = [authOpenId Claimed []]
 
     authHttpManager = getHttpManager
+
+instance YesodBreadcrumbs App where
+  breadcrumb HomeR      = return ("Home", Nothing)
+  breadcrumb ProfileR = return ("Your Profile", Just HomeR)
+  breadcrumb  _ = return ("home", Nothing)
 
 instance YesodAuthPersist App
 

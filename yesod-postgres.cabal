@@ -22,7 +22,8 @@ library
                      Settings
                      Settings.StaticFiles
                      Handler.Common
-                     Handler.Root
+                     Handler.Home
+                     Handler.Profile
 
 
     if flag(dev) || flag(library-only)
@@ -107,6 +108,7 @@ test-suite test
     other-modules:     Handler.CommentSpec
                        Handler.CommonSpec
                        Handler.HomeSpec
+                       Handler.Profile
                        TestImport
     hs-source-dirs:    test
     ghc-options:       -Wall
