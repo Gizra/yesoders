@@ -32,5 +32,9 @@ database:
   database: "_env:PGDATABASE:yesod"
   poolsize: "_env:PGPOOLSIZE:10"
 
+github:
+  client-id:     "_env:GITHUB_CLIENT_ID:'1234'"
+  client-secret: "_env:GITHUB_CLIENT_SECRET:SOME-SECRET"
+
 copyright: Insert copyright statement here
 #analytics: UA-YOURCODE
