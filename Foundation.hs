@@ -211,18 +211,26 @@ instance YesodAuth App where
                 x <- getBy . UniqueUser $ ident
                 case x of
                     Just (Entity uid _) -> return $ Authenticated uid
-                    Nothing -> Authenticated <$> insert User
-                        { userIdent = ident
-                        -- Extract the email from the GitHub's response
-                        , userEmail = fromMaybe "" $ lookup "email" $ credsExtra creds
-                        , userFullName = Nothing
-                        , userDesc = Nothing
-                        , userAdmin = False
-                        , userEmployment = Nothing
-                        , userBlocked = False
-                        , userEmailPublic = False
-                        }
+                    Nothing -> Authenticated <$> createUser ident (fromMaybe "" $ lookup "email" $ credsExtra creds) Nothing
+            "dummy" -> Authenticated <$> createUser ident (ident ++ "@example.com") Nothing
+                       where ident = credsIdent creds
+
             _ -> error "authenticate function does not know this authentication provider. Did you define it?"
+
+        where createUser ident email fullName =
+                insert User
+                    { userIdent = ident
+                    -- Extract the email from the GitHub's response
+                    , userEmail = email
+                    -- @todo: Get from GitHub
+                    , userFullName = fullName
+                    , userDesc = Nothing
+                    , userAdmin = False
+                    , userEmployment = Nothing
+                    , userBlocked = False
+                    , userEmailPublic = False
+                    }
+
 
 
     -- You can add other plugins like BrowserID, email or OAuth here
