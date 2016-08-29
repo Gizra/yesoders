@@ -27,19 +27,8 @@ data App = App
     , appConnPool    :: ConnectionPool -- ^ Database connection pool.
     , appHttpManager :: Manager
     , appLogger      :: Logger
-    , appHomepageProfiles :: IORef ([Profile], Int)
+    , appHomepageProfiles :: IORef ([Entity User], Int)
     }
-
-data Location = Location
-    { locationLong :: Double
-    , locationLat :: Double
-    } deriving (Show)
-
-data Profile = Profile
-    { profileUserId :: UserId
-    , profileName :: Text
-    , profileUser :: User
-    } deriving (Show)
 
 data MenuItem = MenuItem
     { menuItemLabel :: Text

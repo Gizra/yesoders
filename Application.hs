@@ -76,11 +76,26 @@ makeFoundation appSettings = do
         (pgConnStr  $ appDatabaseConf appSettings)
         (pgPoolSize $ appDatabaseConf appSettings)
 
+    -- @todo: add caching
+    writeAppHomepageProfiles pool hprofs
+
+
     -- Perform database migration using our application's logging settings.
     runLoggingT (runSqlPool (runMigration migrateAll) pool) logFunc
 
     -- Return the foundation
     return $ mkFoundation pool
+
+
+-- writeAppHomepageProfiles :: ConnectionPool -> IORef ([Profile], Int) -> IORef [Profile] -> IO ()
+writeAppHomepageProfiles pool hprofs = do
+    hprofs' <- getAppHomepageProfiles pool
+    writeIORef hprofs (hprofs', length hprofs')
+
+-- getHomepageProfs :: Pool SqlBackend -> IO [Profile]
+getAppHomepageProfiles pool =
+    runSqlPool (selectList [UserBlocked ==. False] [LimitTo 24]) pool
+
 
 -- | Convert our foundation to a WAI Application by calling @toWaiAppPlain@ and
 -- applying some additional middlewares.

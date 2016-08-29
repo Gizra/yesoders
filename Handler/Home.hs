@@ -24,14 +24,13 @@ getHomeR = do
     news <- runDB $ selectList [] [Desc NewsWhen, LimitTo 1]
     now <- liftIO getCurrentTime
     let minus7d = addUTCTime ((-1) * 60 * 60 * 24 * 7) now
-    let profs =
+    let users =
             if null allProfs
                 then []
                 else take 24 $ shuffle' allProfs len gen
 
     let fuzzyDiffTime = humanReadableTimeDiff now
     public <- runDB $ count [ UserBlocked ==. False]
-    users <- runDB $ selectList [UserBlocked ==. False] [LimitTo 24] :: Handler ([Entity User])
     defaultLayout $ do
         setTitle "Haskellers"
         $(widgetFile "homepage")
