@@ -212,7 +212,7 @@ instance YesodAuth App where
                 case x of
                     Just (Entity uid _) -> return $ Authenticated uid
                     Nothing -> Authenticated <$> createUser ident (fromMaybe "" $ lookup "email" $ credsExtra creds) Nothing
-            "dummy" -> Authenticated <$> createUser ident (ident ++ "@example.com") Nothing
+            "dummy" -> Authenticated <$> createUser ident (ident ++ "@example.com") (Just ident)
                        where ident = credsIdent creds
 
             _ -> error "authenticate function does not know this authentication provider. Did you define it?"
