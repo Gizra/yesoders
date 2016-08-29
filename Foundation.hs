@@ -118,8 +118,8 @@ instance Yesod App where
                     , menuItemAccessCallback = isJust muser
                     }
                   , NavbarRight $ MenuItem
-                    { menuItemLabel = "Login"
-                    , menuItemRoute = AuthR LoginR
+                    { menuItemLabel = "GitHub Login"
+                    , menuItemRoute = AuthR $ PluginR "github" ["forward"]
                     , menuItemAccessCallback = isNothing muser
                     }
                   , NavbarRight $ MenuItem
