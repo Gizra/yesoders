@@ -222,13 +222,7 @@ instance YesodAuth App where
                         , userBlocked = False
                         , userEmailPublic = False
                         }
-            _ -> error msg
-                 where msg =
-                      #if DEVELOPMENT
-                          error "Only GitHub and authDummy are allowed for authentication."
-                      #else
-                          error "Only GitHub is allowed for authentication."
-                      #endif
+            _ -> error "authenticate function does not know this authentication provider. Did you define it?"
 
 
     -- You can add other plugins like BrowserID, email or OAuth here
