@@ -131,20 +131,39 @@ instance YesodAuth App where
     type AuthId App = UserId
 
     -- Where to send a user after successful login
-    loginDest _ = HomeR
+    loginDest _ = RootR
     -- Where to send a user after logout
-    logoutDest _ = HomeR
+    logoutDest _ = RootR
     -- Override the above two destinations when a Referer: header is present
     redirectToReferer _ = True
 
     authenticate creds = runDB $ do
-        x <- getBy $ UniqueUser $ credsIdent creds
+        x <- getBy . UniqueIdent $ credsIdent creds
         case x of
-            Just (Entity uid _) -> return $ Authenticated uid
-            Nothing -> Authenticated <$> insert User
-                { userIdent = credsIdent creds
-                , userPassword = Nothing
-                }
+            Just (Entity _ ident) -> return . Authenticated $ identUser ident
+            Nothing -> do
+                uid <- insert User
+                    { userFullName = ""
+                    , userWebsite = Nothing
+                    , userEmail = Nothing
+                    , userVerifiedEmail = False
+                    , userVerkey = Nothing
+                    , userHaskellSince = Nothing
+                    , userDesc = Nothing
+                    , userVisible = False
+                    , userReal = False
+                    , userRealPic = False
+                    , userAdmin = False
+                    , userEmployment = Nothing
+                    , userBlocked = False
+                    , userEmailPublic = False
+                    , userLocation = Nothing
+                    , userLongitude = Nothing
+                    , userLatitude = Nothing
+                    , userGooglePlus = Nothing
+                    }
+                _ <- insert $ Ident (credsIdent creds) uid
+                return $ Authenticated uid
 
     -- You can add other plugins like Google Email, email or OAuth here
     authPlugins _ = [authOpenId Claimed []]

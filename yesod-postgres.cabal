@@ -18,11 +18,12 @@ library
                      Import
                      Import.NoFoundation
                      Model
+                     Model.Types
                      Settings
                      Settings.StaticFiles
                      Handler.Common
-                     Handler.Home
-                     Handler.Comment
+                     Handler.Root
+
 
     if flag(dev) || flag(library-only)
         cpp-options:   -DDEVELOPMENT
@@ -84,6 +85,8 @@ library
                  , time
                  , case-insensitive
                  , wai
+
+                 , blaze-html
 
 executable         yesod-postgres
     if flag(library-only)
