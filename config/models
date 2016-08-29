@@ -1,43 +1,15 @@
 User
-  fullName       Text
-  website        Text Maybe
-  email          Text Maybe
-  verifiedEmail  Bool default=false
-  verkey         Text Maybe
-  haskellSince   Int Maybe
-  desc           Textarea Maybe
-  visible        Bool default=true
-  real           Bool default=false
-  realPic        Bool default=false
-  admin          Bool default=false
-  employment     Employment Maybe
-  blocked        Bool default=false
-  emailPublic    Bool default=false
-  location       Text Maybe
-  longitude      Double Maybe
-  latitude       Double Maybe
-  googlePlus     Text Maybe
-  deriving       Show Typeable
-Username
-  user           UserId
-  username       Text
-  UniqueUsernameUser user
-  UniqueUsername username
-  deriving       Show
-Ident
-  ident          Text
-  user           UserId
-  UniqueIdent    ident
-Skill
-  name           Text
-UserSkill
-  user           UserId
-  skill          SkillId
-  UniqueUserSkill user skill
-Package
-  user           UserId
-  name           Text
-  UniquePackage  user name
+    ident          Text
+    email          Text
+    fullName       Text Maybe
+    desc           Textarea Maybe
+    admin          Bool default=false
+    employment     Employment Maybe
+    blocked        Bool default=false
+    emailPublic    Bool default=false
+    UniqueUser ident
+    UniqueEmail email
+    deriving Show Typeable
 Message
   closed         Bool
   when           UTCTime
@@ -59,10 +31,6 @@ Job
   desc           Textarea
   descHtml       Html Maybe
   open           Bool default=true
-ScreenName
-  user           UserId
-  service        Service
-  name           Text
 Team
   name           Text
   desc           Html
@@ -78,12 +46,6 @@ TeamNews
   title          Text
   content        Html
   url            Text
-TeamPackage
-  team           TeamId
-  name           Text
-  hackage        Bool
-  desc           Text Maybe
-  homepage       Text Maybe
 Topic
   team           TeamId
   created        UTCTime
@@ -96,18 +58,3 @@ TopicMessage
   created        UTCTime
   creator        UserId Maybe
   content        Html
-Poll
-  question       Text
-  created        UTCTime
-  closed         Bool default=false
-PollOption
-  poll           PollId
-  answer         Text
-  priority       Int
-PollAnswer
-  poll           PollId
-  option         PollOptionId
-  user           UserId
-  real           Bool
-  answered       UTCTime default=now()
-  UniquePollAnswer poll user

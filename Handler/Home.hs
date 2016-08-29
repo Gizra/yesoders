@@ -24,33 +24,17 @@ getHomeR = do
     news <- runDB $ selectList [] [Desc NewsWhen, LimitTo 1]
     now <- liftIO getCurrentTime
     let minus7d = addUTCTime ((-1) * 60 * 60 * 24 * 7) now
-    job <- runDB $ selectList
-        [JobPostedAt >. minus7d, JobOpen ==. True]
-        [Desc JobPostedAt, LimitTo 1]
     let profs =
             if null allProfs
                 then []
                 else take 24 $ shuffle' allProfs len gen
 
     let fuzzyDiffTime = humanReadableTimeDiff now
-    (public, private) <- runDB $ do
-        public <- count [ UserVerifiedEmail ==. True
-                        , UserVisible ==. True
-                        , UserBlocked ==. False
-                        ]
-        private <- count [ UserVerifiedEmail ==. True
-                         , UserVisible ==. False
-                         , UserBlocked ==. False
-                         ]
-        return (public, private)
+    public <- runDB $ count [ UserBlocked ==. False]
     defaultLayout $ do
         setTitle "Haskellers"
         $(widgetFile "homepage")
 
-
--- Get Route out of a Profile
-profileUserR :: Profile -> Route App
-profileUserR p = userR ((profileUserId p, profileUser p), profileUsername p)
 
 -- Get gravatar for a user.
 gravatar :: Int -> Text -> Text

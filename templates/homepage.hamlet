@@ -5,11 +5,7 @@
             \Total accounts:
             <em>#{show public}
             \public,
-            <em>#{show private}
-            \private
         $forall prof <- profs
             <div .user>
-                <a href="@{profileUserR prof}">
-                    <img src="#{gravatar 80 (profileEmail prof)}" alt="Gravatar Profile Picture">
-                    <span .name>
-                      \#{profileName prof}
+                <span .name>
+                  \#{profileName prof}

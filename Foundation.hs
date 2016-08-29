@@ -4,15 +4,15 @@ import Import.NoFoundation
 import Database.Persist.Sql (ConnectionPool, runSqlPool)
 import Text.Hamlet          (hamletFile)
 import Text.Jasmine         (minifym)
-import Yesod.Auth.OpenId    (authOpenId, IdentifierType (Claimed))
+import Yesod.Auth.OAuth2.Github
 import Yesod.Default.Util   (addStaticContentExternal)
 import Yesod.Core.Types     (Logger)
 import Yesod.Form.Jquery
+
 import qualified Yesod.Core.Unsafe as Unsafe
 import qualified Data.CaseInsensitive as CI
 import qualified Data.Text.Encoding as TE
 import Data.Char (isSpace)
-import qualified Data.Set as Set
 import Data.Time
 
 
@@ -37,11 +37,7 @@ data Location = Location
 data Profile = Profile
     { profileUserId :: UserId
     , profileName :: Text
-    , profileEmail :: Text
     , profileUser :: User
-    , profileSkills :: Set.Set SkillId
-    , profileUsername :: Maybe Username
-    , profileLocation :: Maybe Location
     } deriving (Show)
 
 data MenuItem = MenuItem
@@ -206,36 +202,31 @@ instance YesodAuth App where
     -- Override the above two destinations when a Referer: header is present
     redirectToReferer _ = True
 
-    authenticate creds = runDB $ do
-        x <- getBy . UniqueIdent $ credsIdent creds
-        case x of
-            Just (Entity _ ident) -> return . Authenticated $ identUser ident
-            Nothing -> do
-                uid <- insert User
-                    { userFullName = ""
-                    , userWebsite = Nothing
-                    , userEmail = Nothing
-                    , userVerifiedEmail = False
-                    , userVerkey = Nothing
-                    , userHaskellSince = Nothing
-                    , userDesc = Nothing
-                    , userVisible = False
-                    , userReal = False
-                    , userRealPic = False
-                    , userAdmin = False
-                    , userEmployment = Nothing
-                    , userBlocked = False
-                    , userEmailPublic = False
-                    , userLocation = Nothing
-                    , userLongitude = Nothing
-                    , userLatitude = Nothing
-                    , userGooglePlus = Nothing
-                    }
-                _ <- insert $ Ident (credsIdent creds) uid
-                return $ Authenticated uid
+    authenticate creds = runDB $
+        case credsPlugin creds of
+            "github" -> do
+                let ident = fromMaybe "" $ lookup "login" $ credsExtra creds
+                x <- getBy . UniqueUser $ ident
+                case x of
+                    Just (Entity uid _) -> return $ Authenticated uid
+                    Nothing -> Authenticated <$> insert User
+                        { userIdent = ident
+                        -- Extract the email from the GitHub's response
+                        , userEmail = fromMaybe "" $ lookup "email" $ credsExtra creds
+                        , userFullName = Nothing
+                        , userDesc = Nothing
+                        , userAdmin = False
+                        , userEmployment = Nothing
+                        , userBlocked = False
+                        , userEmailPublic = False
+                        }
+            _ -> error "Only GitHub and AuthDummy are allowed for authentication."
 
-    -- You can add other plugins like Google Email, email or OAuth here
-    authPlugins _ = [authOpenId Claimed []]
+    -- You can add other plugins like BrowserID, email or OAuth here
+    authPlugins app =
+        [ oauth2Github (oauthKeysClientId githubKeys) (oauthKeysClientSecret githubKeys)
+        ]
+        where githubKeys = appGithubKeys $ appSettings app
 
     authHttpManager = getHttpManager
 
@@ -272,11 +263,6 @@ unsafeHandler = Unsafe.fakeHandlerGetLogger appLogger
 -- https://github.com/yesodweb/yesod/wiki/i18n-messages-in-the-scaffolding
 
 -- Helper functions
-
--- Get a Route out of a user.
-userR :: ((UserId, User), Maybe Username) -> Route App
-userR (_, Just (Username _ username)) = UserR username
-userR ((uid, _), _) = UserR $ toPathPiece uid
 
 prettyDay :: Day -> String
 prettyDay = formatTime defaultTimeLocale "%B %e, %Y"

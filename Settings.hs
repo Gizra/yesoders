@@ -54,7 +54,22 @@ data AppSettings = AppSettings
     -- ^ Copyright text to appear in the footer of the page
     , appAnalytics              :: Maybe Text
     -- ^ Google Analytics code
+
+    , appGithubKeys             :: OAuthKeys
+    -- ^ GitHub keys
     }
+
+data OAuthKeys = OAuthKeys
+      { oauthKeysClientId     :: Text
+      , oauthKeysClientSecret :: Text
+      } deriving Show
+
+instance FromJSON OAuthKeys where
+  parseJSON = withObject "OAuthKeys" $ \o -> do
+      oauthKeysClientId     <- o .: "client-id"
+      oauthKeysClientSecret <- o .: "client-secret"
+
+      return OAuthKeys {..}
 
 instance FromJSON AppSettings where
     parseJSON = withObject "AppSettings" $ \o -> do
@@ -79,6 +94,8 @@ instance FromJSON AppSettings where
 
         appCopyright              <- o .: "copyright"
         appAnalytics              <- o .:? "analytics"
+
+        appGithubKeys             <- o .: "github"
 
         return AppSettings {..}
 
