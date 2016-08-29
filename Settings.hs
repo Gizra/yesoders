@@ -57,6 +57,9 @@ data AppSettings = AppSettings
 
     , appGithubKeys             :: OAuthKeys
     -- ^ GitHub keys
+
+    , appDevelopment            :: Bool
+    -- ^ Indicate if we are in development mode
     }
 
 data OAuthKeys = OAuthKeys
@@ -96,6 +99,8 @@ instance FromJSON AppSettings where
         appAnalytics              <- o .:? "analytics"
 
         appGithubKeys             <- o .: "github"
+
+        appDevelopment            <- o .:? "development"            .!= defaultDev
 
         return AppSettings {..}
 

@@ -1,4 +1,3 @@
-{-# Language CPP #-}
 module Foundation where
 
 import Import.NoFoundation
@@ -243,12 +242,7 @@ instance YesodAuth App where
         ] ++ extraAuthPlugins
         where githubKeys = appGithubKeys $ appSettings app
               -- Enable authDummy login when in development mode.
-              extraAuthPlugins =
-                    #if DEVELOPMENT
-                                  [authDummy]
-                    #else
-                                  []
-                    #endif
+              extraAuthPlugins = [authDummy | appDevelopment $ appSettings app]
 
     authHttpManager = getHttpManager
 
