@@ -1,9 +1,11 @@
+{-# Language CPP #-}
 module Foundation where
 
 import Import.NoFoundation
 import Database.Persist.Sql (ConnectionPool, runSqlPool)
 import Text.Hamlet          (hamletFile)
 import Text.Jasmine         (minifym)
+import Yesod.Auth.Dummy
 import Yesod.Auth.OAuth2.Github
 import Yesod.Default.Util   (addStaticContentExternal)
 import Yesod.Core.Types     (Logger)
@@ -225,8 +227,15 @@ instance YesodAuth App where
     -- You can add other plugins like BrowserID, email or OAuth here
     authPlugins app =
         [ oauth2Github (oauthKeysClientId githubKeys) (oauthKeysClientSecret githubKeys)
-        ]
+        ] ++ extraAuthPlugins
         where githubKeys = appGithubKeys $ appSettings app
+              -- Enable authDummy login when in development mode.
+              extraAuthPlugins =
+                    #if DEVELOPMENT
+                                  [authDummy]
+                    #else
+                                  []
+                    #endif
 
     authHttpManager = getHttpManager
 
