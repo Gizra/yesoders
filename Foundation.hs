@@ -7,9 +7,14 @@ import Text.Jasmine         (minifym)
 import Yesod.Auth.OpenId    (authOpenId, IdentifierType (Claimed))
 import Yesod.Default.Util   (addStaticContentExternal)
 import Yesod.Core.Types     (Logger)
+import Yesod.Form.Jquery
 import qualified Yesod.Core.Unsafe as Unsafe
 import qualified Data.CaseInsensitive as CI
 import qualified Data.Text.Encoding as TE
+import Data.Char (isSpace)
+import qualified Data.Set as Set
+import Data.Time
+
 
 -- | The foundation datatype for your application. This can be a good place to
 -- keep settings and values requiring initialization before your application
@@ -21,7 +26,25 @@ data App = App
     , appConnPool    :: ConnectionPool -- ^ Database connection pool.
     , appHttpManager :: Manager
     , appLogger      :: Logger
+    , appHomepageProfiles :: IORef ([Profile], Int)
     }
+
+data Location = Location
+    { locationLong :: Double
+    , locationLat :: Double
+    }
+  deriving Show
+
+data Profile = Profile
+    { profileUserId :: UserId
+    , profileName :: Text
+    , profileEmail :: Text
+    , profileUser :: User
+    , profileSkills :: Set.Set SkillId
+    , profileUsername :: Maybe Username
+    , profileLocation :: Maybe Location
+    }
+  deriving Show
 
 -- This is where we define all of the routes in our application. For a full
 -- explanation of the syntax, please see:
@@ -76,7 +99,12 @@ instance Yesod App where
         -- you to use normal widget features in default-layout.
 
         pc <- widgetToPageContent $ do
-            addStylesheet $ StaticR css_bootstrap_css
+            -- Semantic UI
+            addStylesheet $ StaticR semantic_semantic_min_css
+            addScript $ StaticR semantic_sidebar_min_js
+            addScript $ StaticR semantic_transition_min_js
+            addScript $ StaticR semantic_visibility_min_js
+
             $(widgetFile "default-layout")
         withUrlRenderer $(hamletFile "templates/default-layout-wrapper.hamlet")
 
@@ -183,6 +211,9 @@ instance RenderMessage App FormMessage where
 instance HasHttpManager App where
     getHttpManager = appHttpManager
 
+instance YesodJquery App where
+    urlJqueryUiCss _ = Left $ StaticR jquery_ui_css
+
 unsafeHandler :: App -> Handler a -> IO a
 unsafeHandler = Unsafe.fakeHandlerGetLogger appLogger
 
@@ -193,3 +224,55 @@ unsafeHandler = Unsafe.fakeHandlerGetLogger appLogger
 -- https://github.com/yesodweb/yesod/wiki/Sending-email
 -- https://github.com/yesodweb/yesod/wiki/Serve-static-files-from-a-separate-domain
 -- https://github.com/yesodweb/yesod/wiki/i18n-messages-in-the-scaffolding
+
+-- Helper functions
+
+prettyDay :: Day -> String
+prettyDay = formatTime defaultTimeLocale "%B %e, %Y"
+
+humanReadableTimeDiff :: UTCTime     -- ^ current time
+                      -> UTCTime     -- ^ old time
+                      -> String
+humanReadableTimeDiff curTime oldTime =
+    helper diff
+  where
+    diff    = diffUTCTime curTime oldTime
+
+    minutes :: NominalDiffTime -> Double
+    minutes n = realToFrac $ n / 60
+
+    hours :: NominalDiffTime -> Double
+    hours   n = (minutes n) / 60
+
+    days :: NominalDiffTime -> Double
+    days    n = (hours n) / 24
+
+    weeks :: NominalDiffTime -> Double
+    weeks   n = (days n) / 7
+
+    years :: NominalDiffTime -> Double
+    years   n = (days n) / 365
+
+    i2s :: RealFrac a => a -> String
+    i2s n = show m where m = truncate n :: Int
+
+    old = utcToLocalTime utc oldTime
+
+    trim = f . f where f = reverse . dropWhile isSpace
+
+    dow           = trim $! formatTime defaultTimeLocale "%l:%M %p on %A" old
+    thisYear      = trim $! formatTime defaultTimeLocale "%b %e" old
+    previousYears = trim $! formatTime defaultTimeLocale "%b %e, %Y" old
+
+    helper  d | d < 1          = "one second ago"
+              | d < 60         = i2s d ++ " seconds ago"
+              | minutes d < 2  = "one minute ago"
+              | minutes d < 60 = i2s (minutes d) ++ " minutes ago"
+              | hours d < 2    = "one hour ago"
+              | hours d < 24   = i2s (hours d) ++ " hours ago"
+              | days d < 5     = dow
+              | days d < 10    = i2s (days d)  ++ " days ago"
+              | weeks d < 2    = i2s (weeks d) ++ " week ago"
+              | weeks d < 5    = i2s (weeks d)  ++ " weeks ago"
+              | years d < 1    = thisYear
+              | otherwise      = previousYears

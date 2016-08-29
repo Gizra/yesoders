@@ -87,6 +87,9 @@ library
                  , wai
 
                  , blaze-html
+                 , random
+                 , random-shuffle
+                 , text-icu
 
 executable         yesod-postgres
     if flag(library-only)
