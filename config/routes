@@ -6,3 +6,4 @@
 
 / HomeR GET
 /profile ProfileR GET POST
+/user/#Text UserR GET

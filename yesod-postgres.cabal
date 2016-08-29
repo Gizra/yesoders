@@ -24,6 +24,7 @@ library
                      Handler.Common
                      Handler.Home
                      Handler.Profile
+                     Handler.User
 
 
     if flag(dev) || flag(library-only)
@@ -88,9 +89,11 @@ library
                  , wai
 
                  , blaze-html
+                 , pureMD5
                  , random
                  , random-shuffle
                  , text-icu
+                 , utf8-string
 
 executable         yesod-postgres
     if flag(library-only)
@@ -109,6 +112,7 @@ test-suite test
                        Handler.CommonSpec
                        Handler.HomeSpec
                        Handler.Profile
+                       Handler.User
                        TestImport
     hs-source-dirs:    test
     ghc-options:       -Wall

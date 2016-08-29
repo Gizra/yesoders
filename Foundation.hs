@@ -273,6 +273,11 @@ unsafeHandler = Unsafe.fakeHandlerGetLogger appLogger
 
 -- Helper functions
 
+-- Get a Route out of a user.
+userR :: ((UserId, User), Maybe Username) -> Route App
+userR (_, Just (Username _ username)) = UserR username
+userR ((uid, _), _) = UserR $ toPathPiece uid
+
 prettyDay :: Day -> String
 prettyDay = formatTime defaultTimeLocale "%B %e, %Y"
 
