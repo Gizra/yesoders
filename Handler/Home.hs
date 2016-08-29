@@ -31,6 +31,7 @@ getHomeR = do
 
     let fuzzyDiffTime = humanReadableTimeDiff now
     public <- runDB $ count [ UserBlocked ==. False]
+    users <- runDB $ selectList [UserBlocked ==. False] [LimitTo 24] :: Handler ([Entity User])
     defaultLayout $ do
         setTitle "Haskellers"
         $(widgetFile "homepage")

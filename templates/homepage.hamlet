@@ -5,7 +5,7 @@
             \Total accounts:
             <em>#{show public}
             \public,
-        $forall prof <- profs
+        $forall Entity userId user  <- users
             <div .user>
                 <span .name>
-                  \#{profileName prof}
+                  \#{userIdent user}
