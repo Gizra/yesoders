@@ -87,7 +87,7 @@ makeFoundation appSettings = do
     return $ mkFoundation pool
 
 
--- writeAppHomepageProfiles :: ConnectionPool -> IORef ([Profile], Int) -> IORef [Profile] -> IO ()
+-- writeAppHomepageProfiles :: ConnectionPool SqlBackend -> IORef ([Entity User], Int) -> IO ()
 writeAppHomepageProfiles pool hprofs = do
     hprofs' <- getAppHomepageProfiles pool
     writeIORef hprofs (hprofs', length hprofs')
