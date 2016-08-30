@@ -139,10 +139,13 @@ instance Yesod App where
 
     -- Routes not requiring authentication.
     isAuthorized (AuthR _) _ = return Authorized
+    isAuthorized HomeR _ = return Authorized
     isAuthorized FaviconR _ = return Authorized
     isAuthorized RobotsR _ = return Authorized
-    -- Default to Authorized for now.
-    isAuthorized _ _ = return Authorized
+    isAuthorized (StaticR _) _ = return Authorized
+    isAuthorized (UserR _) _ = return Authorized
+
+    isAuthorized ProfileR _ = isAuthenticated
 
     -- This function creates static content files in the static folder
     -- and names them based on a hash of their content. This allows
@@ -171,6 +174,13 @@ instance Yesod App where
             || level == LevelError
 
     makeLogger = return . appLogger
+
+isAuthenticated :: Handler AuthResult
+isAuthenticated = do
+    mu <- maybeAuthId
+    return $ case mu of
+        Nothing -> Unauthorized "You must login to access this page"
+        Just _ -> Authorized
 
 -- How to run database actions.
 instance YesodPersist App where
