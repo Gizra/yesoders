@@ -27,7 +27,6 @@ data App = App
     , appConnPool    :: ConnectionPool -- ^ Database connection pool.
     , appHttpManager :: Manager
     , appLogger      :: Logger
-    , appHomepageProfiles :: IORef ([Entity User], Int)
     }
 
 data MenuItem = MenuItem

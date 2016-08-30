@@ -1,11 +1,21 @@
-<div.ui.container>
+<div class="ui inverted vertical center aligned segment masthead">
+    <div class="ui text container">
+        <h1 class="ui inverted header">
+            Yesod; A modern framework for blazing fast websites
+        <h2>
+            Fast, Stable & spiced with great community
+        <div class="ui huge primary button">
+            Get Started
+            <i class="right arrow icon">
 
-    <div id="users" .users>
-        <div .counts>
-            \Total accounts:
-            <em>#{show public}
-            \public,
-        $forall Entity userId user  <- users
-            <div .user>
-                <span .name>
-                  \#{userIdent user}
+
+<div class="ui container">
+    <div class="ui center aligned segment basic">
+        <h3>Here are some of our community members
+    <div class="ui five stackable cards">
+        $forall Entity _ user  <- users
+            <div class="card">
+                <div class="image">
+                    <img src="https://github.com/#{userIdent user}.png?s=90">
+                <div class="content">
+                    <a class="header">@#{userIdent user}

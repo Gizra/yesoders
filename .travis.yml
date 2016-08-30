@@ -28,8 +28,9 @@ install:
   - stack build --only-snapshot --no-terminal
 
 before_script:
-  - psql -c 'create database travis_ci_test;' -U postgres
-  # postgres has no password.
+  - psql -c 'create database yesod_test;' -U postgres
+  # Set postgres user credentials.
+  - export PGUSER="postgres"
   - export PGPASS=""
 
 script:
