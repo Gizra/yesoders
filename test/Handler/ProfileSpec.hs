@@ -4,6 +4,9 @@ import TestImport
 
 spec :: Spec
 spec = withApp $ do
-    it "asserts no access to my-account for anonymous user" $ do
+    it "asserts access to my-account for authenticated user" $ do
+        user <- createUser "foo"
+        authenticateAs user
+
         get ProfileR
-        statusIs 403
+        statusIs 200
