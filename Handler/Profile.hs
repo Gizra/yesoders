@@ -4,7 +4,9 @@ import Import
 
 getProfileR :: Handler Html
 getProfileR = do
-    (userId, user) <- requireAuthPair
+    currentTime <- liftIO getCurrentTime
+    (_, user) <- requireAuthPair
+    let memberFor = humanReadableTimeDiff currentTime (userCreated user)
     defaultLayout $ do
         setTitle . toHtml $ userIdent user `mappend` "'s User page"
         $(widgetFile "user")
