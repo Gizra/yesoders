@@ -145,6 +145,7 @@ instance Yesod App where
     isAuthorized (StaticR _) _ = return Authorized
     isAuthorized (UserR _) _ = return Authorized
 
+    isAuthorized (AuthR LogoutR) _ = isAuthenticated
     isAuthorized (AuthR _) _ = do
         mu <- maybeAuthId
         return $ case mu of

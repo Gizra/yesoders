@@ -4,7 +4,11 @@ import TestImport
 
 spec :: Spec
 spec = withApp $ do
+    describe "sitemap.xml" $ do
+        it "loads the sitemap and shows users" $ do
+            user <- createUser "foo"
+            get SitemapR
+            statusIs 200
 
-    describe "getSitemapR" $ do
-        error "Spec not implemented: getSitemapR"
-
+            let (Entity _ u) = user
+            bodyContains . unpack $ userIdent u
