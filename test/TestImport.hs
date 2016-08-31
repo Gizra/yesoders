@@ -12,7 +12,7 @@ import Model                 as X
 import Settings              as X
 import Test.Hspec            as X
 import Text.Shakespeare.Text (st)
-import Yesod.Auth
+import Yesod.Auth            as X
 import Yesod.Default.Config2 (useEnv, loadYamlSettings)
 import Yesod.Test            as X
 
