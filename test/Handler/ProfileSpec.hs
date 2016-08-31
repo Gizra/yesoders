@@ -25,4 +25,4 @@ spec = withApp $ do
         htmlAnyContain ".ui.segment div" "Members for"
 
         -- User's GitHub name
-        htmlAnyContain "a.header" $ unpack . userIdent u
+        htmlAnyContain "a.header" . unpack $ userIdent u
