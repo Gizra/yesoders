@@ -7,3 +7,5 @@ database:
   #
   #   database: "_env:PGDATABASE:yesod-postgres_LOWER_test"
   database: yesod_test
+
+development: true
