@@ -63,7 +63,7 @@ authenticateAs (Entity _ u) = do
     request $ do
         setMethod "POST"
         addPostParam "ident" $ userIdent u
-        setUrl $ AuthR LoginR
+        setUrl $ AuthR $ PluginR "dummy" []
 
 createUser :: Text -> YesodExample App (Entity User)
 createUser ident = do
