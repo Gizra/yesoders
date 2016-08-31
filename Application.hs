@@ -56,9 +56,6 @@ makeFoundation appSettings = do
         (if appMutableStatic appSettings then staticDevel else static)
         (appStaticDir appSettings)
 
-    hprofs <- newIORef ([], 0)
-    let appHomepageProfiles = hprofs
-
     -- We need a log function to create a connection pool. We need a connection
     -- pool to create our foundation. And we need our foundation to get a
     -- logging function. To get out of this loop, we initially create a
@@ -76,25 +73,11 @@ makeFoundation appSettings = do
         (pgConnStr  $ appDatabaseConf appSettings)
         (pgPoolSize $ appDatabaseConf appSettings)
 
-    -- @todo: add caching
-    writeAppHomepageProfiles pool hprofs
-
-
     -- Perform database migration using our application's logging settings.
     runLoggingT (runSqlPool (runMigration migrateAll) pool) logFunc
 
     -- Return the foundation
     return $ mkFoundation pool
-
-
--- writeAppHomepageProfiles :: ConnectionPool SqlBackend -> IORef ([Entity User], Int) -> IO ()
-writeAppHomepageProfiles pool hprofs = do
-    hprofs' <- getAppHomepageProfiles pool
-    writeIORef hprofs (hprofs', length hprofs')
-
--- getHomepageProfs :: Pool SqlBackend -> IO [Profile]
-getAppHomepageProfiles pool =
-    runSqlPool (selectList [UserBlocked ==. False] [LimitTo 24]) pool
 
 
 -- | Convert our foundation to a WAI Application by calling @toWaiAppPlain@ and

@@ -30,17 +30,19 @@
           $forall MenuItem label route _ <- navbarRightFilteredMenuItems
             <a class="ui inverted button" :Just route == mcurrentRoute:.active href="@{route}">#{label}
 
-  <div.ui.container>
-    <div.ui.breadcrumb>
-      $forall bc <- parents
-        <a.section href=@{fst bc}>#{snd bc}
-        <div.divider> /
+      <div class="ui container">
 
-      <div.active.section>
-        #{title}
+        $if not $ Just HomeR == mcurrentRoute
+            <div.ui.breadcrumb>
+              $forall bc <- parents
+                <a.section href=@{fst bc}>#{snd bc}
+                <div.divider> /
 
-    $maybe msg <- mmsg
-      <div.ui.message #message>#{msg}
+              <div.active.section>
+                #{title}
+
+        $maybe msg <- mmsg
+          <div.ui.message #message>#{msg}
 
   ^{widget}
 
