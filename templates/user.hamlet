@@ -16,11 +16,3 @@
             <div class="ui segment">
                 <div>
                     Members for: #{memberFor}
-
-                <div>
-                    Sites & Projects
-
-        <div class="column">
-            <div class="ui segment">
-                <div>
-                    Mentors:
