@@ -41,7 +41,7 @@ data MenuTypes
     | NavbarRight MenuItem
 
 data FlagAction = Unflag | Flag
-    deriving (Eq, Read, Show)
+    deriving (Enum, Eq, Read, Show)
 
 instance PathPiece FlagAction where
     fromPathPiece = readMaybe . unpack
