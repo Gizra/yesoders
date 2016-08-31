@@ -12,6 +12,7 @@ import Model                 as X
 import Settings              as X
 import Test.Hspec            as X
 import Text.Shakespeare.Text (st)
+import Yesod.Auth
 import Yesod.Default.Config2 (useEnv, loadYamlSettings)
 import Yesod.Test            as X
 
@@ -59,14 +60,10 @@ getTables = do
 
 authenticateAs :: Entity User -> YesodExample App ()
 authenticateAs (Entity _ u) = do
-    root <- appRoot . appSettings <$> getTestYesod
-
     request $ do
         setMethod "POST"
         addPostParam "ident" $ userIdent u
-        setUrl $ case root of
-            Nothing -> "http://localhost:3000/auth/page/dummy" :: Text
-            Just val -> val ++ ("/auth/page/dummy" :: Text)
+        setUrl $ AuthR LoginR
 
 createUser :: Text -> YesodExample App (Entity User)
 createUser ident = do
