@@ -4,6 +4,7 @@ import Import.NoFoundation
 import Database.Persist.Sql (ConnectionPool, runSqlPool)
 import Text.Hamlet          (hamletFile)
 import Text.Jasmine         (minifym)
+import Text.Read            (readMaybe)
 import Yesod.Auth.Dummy
 import Yesod.Auth.OAuth2.Github
 import Yesod.Default.Util   (addStaticContentExternal)
@@ -38,6 +39,13 @@ data MenuItem = MenuItem
 data MenuTypes
     = NavbarLeft MenuItem
     | NavbarRight MenuItem
+
+data FlagAction = Unflag | Flag
+    deriving (Eq, Read, Show)
+
+instance PathPiece FlagAction where
+    fromPathPiece = readMaybe . unpack
+    toPathPiece = pack . show
 
 -- This is where we define all of the routes in our application. For a full
 -- explanation of the syntax, please see:
@@ -149,6 +157,7 @@ instance Yesod App where
         return $ case mu of
             Nothing -> Authorized
             Just _ -> Unauthorized "As a logged in user, you cannot re-login. You must Logout first."
+    isAuthorized (FlagMentorR _ _ _) _ = isAuthenticated
     isAuthorized ProfileR _ = isAuthenticated
 
     -- This function creates static content files in the static folder

@@ -22,6 +22,7 @@ library
                      Settings
                      Settings.StaticFiles
                      Handler.Common
+                     Handler.FlagMentor
                      Handler.Home
                      Handler.Profile
                      Handler.User

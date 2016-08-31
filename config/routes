@@ -7,3 +7,4 @@
 / HomeR GET
 /profile ProfileR GET POST
 /user/#Text UserR GET
+/flag/mentor/#UserId/#FlagAction/#Text FlagMentorR GET

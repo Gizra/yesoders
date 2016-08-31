@@ -11,6 +11,10 @@ User
     UniqueUser ident
     UniqueEmail email
     deriving Show Typeable
+FlagMentor
+    created        UTCTime
+    user           UserId
+    flagging       UserId
 Message
   closed         Bool
   when           UTCTime
