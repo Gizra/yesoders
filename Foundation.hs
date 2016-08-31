@@ -138,11 +138,18 @@ instance Yesod App where
     authRoute _ = Just $ AuthR LoginR
 
     -- Routes not requiring authentication.
-    isAuthorized (AuthR _) _ = return Authorized
+    isAuthorized HomeR _ = return Authorized
     isAuthorized FaviconR _ = return Authorized
     isAuthorized RobotsR _ = return Authorized
-    -- Default to Authorized for now.
-    isAuthorized _ _ = return Authorized
+    isAuthorized (StaticR _) _ = return Authorized
+    isAuthorized (UserR _) _ = return Authorized
+
+    isAuthorized (AuthR _) _ = do
+        mu <- maybeAuthId
+        return $ case mu of
+            Nothing -> Authorized
+            Just _ -> Unauthorized "As a logged in user, you cannot re-login. You must Logout first."
+    isAuthorized ProfileR _ = isAuthenticated
 
     -- This function creates static content files in the static folder
     -- and names them based on a hash of their content. This allows
@@ -172,6 +179,13 @@ instance Yesod App where
 
     makeLogger = return . appLogger
 
+isAuthenticated :: Handler AuthResult
+isAuthenticated = do
+    mu <- maybeAuthId
+    return $ case mu of
+        Nothing -> Unauthorized "You must login to access this page"
+        Just _ -> Authorized
+
 -- How to run database actions.
 instance YesodPersist App where
     type YesodPersistBackend App = SqlBackend
@@ -191,24 +205,25 @@ instance YesodAuth App where
     -- Override the above two destinations when a Referer: header is present
     redirectToReferer _ = True
 
-    authenticate creds = runDB $
-        case credsPlugin creds of
+    authenticate creds = do
+        currentTime <- liftIO getCurrentTime
+        runDB $ case credsPlugin creds of
             "github" -> do
                 let ident = fromMaybe "" $ lookup "login" $ credsExtra creds
                 x <- getBy . UniqueUser $ ident
                 case x of
                     Just (Entity uid _) -> return $ Authenticated uid
-                    Nothing -> Authenticated <$> createUser ident (fromMaybe "" $ lookup "email" $ credsExtra creds) Nothing
+                    Nothing -> Authenticated <$> createUser ident (fromMaybe "" $ lookup "email" $ credsExtra creds) Nothing currentTime
             "dummy" -> do
                 let ident = credsIdent creds
                 x <- getBy . UniqueUser $ ident
                 case x of
                     Just (Entity uid _) -> return $ Authenticated uid
-                    Nothing -> Authenticated <$> createUser ident (ident ++ "@example.com") (Just ident)
+                    Nothing -> Authenticated <$> createUser ident (ident ++ "@example.com") (Just ident) currentTime
 
             _ -> error "authenticate function does not know this authentication provider. Did you define it?"
 
-        where createUser ident email fullName =
+        where createUser ident email fullName currentTime =
                 insert User
                     { userIdent = ident
                     -- Extract the email from the GitHub's response
@@ -220,6 +235,7 @@ instance YesodAuth App where
                     , userEmployment = Nothing
                     , userBlocked = False
                     , userEmailPublic = False
+                    , userCreated = currentTime
                     }
 
 

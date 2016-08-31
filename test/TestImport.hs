@@ -9,8 +9,10 @@ import Database.Persist      as X hiding (get)
 import Database.Persist.Sql  (SqlPersistM, SqlBackend, runSqlPersistMPool, rawExecute, rawSql, unSingle, connEscapeName)
 import Foundation            as X
 import Model                 as X
+import Settings              as X
 import Test.Hspec            as X
 import Text.Shakespeare.Text (st)
+import Yesod.Auth            as X
 import Yesod.Default.Config2 (useEnv, loadYamlSettings)
 import Yesod.Test            as X
 
@@ -55,3 +57,26 @@ getTables = do
     |] []
 
     return $ map unSingle tables
+
+authenticateAs :: Entity User -> YesodExample App ()
+authenticateAs (Entity _ u) = do
+    request $ do
+        setMethod "POST"
+        addPostParam "ident" $ userIdent u
+        setUrl $ AuthR $ PluginR "dummy" []
+
+createUser :: Text -> YesodExample App (Entity User)
+createUser ident = do
+    -- @todo: Make ident random
+    currentTime <- liftIO getCurrentTime
+    runDB $ insertEntity User
+        { userIdent = ident
+        , userEmail = ident ++ ("@example.com" :: Text)
+        , userFullName = Nothing
+        , userDesc = Nothing
+        , userAdmin = False
+        , userEmployment = Nothing
+        , userBlocked = False
+        , userEmailPublic = False
+        , userCreated = currentTime
+        }
