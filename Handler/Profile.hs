@@ -11,7 +11,11 @@ getProfileR = do
     -- @todo: Use helper function.
     csrf <- fmap reqToken getRequest
     let csrf' = fromMaybe "" csrf
-    let token = getValidToken csrf userId Flag
+
+    let action = Unflag
+    let flaggedId = userId
+
+    let token = getValidToken csrf flaggedId action
 
     defaultLayout $ do
         setTitle . toHtml $ userIdent user `mappend` "'s User page"
