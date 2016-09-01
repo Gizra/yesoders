@@ -1,8 +1,6 @@
 module Handler.FlagMentor where
 
 import Import
-import Data.Digest.Pure.MD5
-import qualified Data.Text as T (append)
 
 
 getFlagMentorR :: UserId -> FlagAction-> Text -> Handler Value
@@ -47,11 +45,3 @@ getFlagMentorR flaggedId action token = do
                 [ "action" .= nextAction
                 -- , "data" .= urlRender $ FlagMentorR flaggedId nextAction nextToken
                 ]
-
-getValidToken :: Maybe Text -> Key record -> FlagAction -> Text
-getValidToken csrf flaggedId action =
-    -- Calculate the token of the Entity ID along with the action.
-    -- We have to convert Text to ByteString, to md5, back to ByteString and
-    -- finish with converting back to Text.
-    pack $ show $ md5 . fromStrict $ encodeUtf8 $ csrf' `T.append` (pack $ show action) :: Text
-    where csrf' = fromMaybe "" csrf

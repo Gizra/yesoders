@@ -16,3 +16,6 @@
             <div class="ui segment">
                 <div>
                     Members for: #{memberFor}
+
+                <div>
+                    <a href="@{FlagMentorR userId Flag token}">Mark as Mentor

@@ -16,7 +16,11 @@ import qualified Yesod.Core.Unsafe as Unsafe
 import qualified Data.CaseInsensitive as CI
 import qualified Data.Text.Encoding as TE
 import Data.Char (isSpace)
+import Data.Digest.Pure.MD5
+import qualified Data.Text as T (append)
 import Data.Time
+
+
 
 
 -- | The foundation datatype for your application. This can be a good place to
@@ -348,3 +352,12 @@ humanReadableTimeDiff curTime oldTime =
               | weeks d < 5    = i2s (weeks d)  ++ " weeks ago"
               | years d < 1    = thisYear
               | otherwise      = previousYears
+
+
+getValidToken :: Maybe Text -> Key record -> FlagAction -> Text
+getValidToken csrf flaggedId action =
+  -- Calculate the token of the Entity ID along with the action.
+  -- We have to convert Text to ByteString, to md5, back to ByteString and
+  -- finish with converting back to Text.
+  pack $ show $ md5 . fromStrict $ encodeUtf8 $ csrf' `T.append` (pack $ show action) :: Text
+  where csrf' = fromMaybe "" csrf
