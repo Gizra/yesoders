@@ -7,7 +7,7 @@ import qualified Data.Text as T (append)
 
 getFlagMentorR :: UserId -> FlagAction-> Text -> Handler Value
 getFlagMentorR flaggedId action token = do
-    flaggedEntity <- runDB $ get404 flaggedId
+    _ <- runDB $ get404 flaggedId
     authId <- requireAuthId
 
     csrf <- fmap reqToken getRequest
@@ -26,21 +26,14 @@ getFlagMentorR flaggedId action token = do
             -- action.
             _ <- case action of
                     Unflag -> do
-                        -- mFlagging <- getBy $ FlagMentorUnique authId flaggedId
-                        return ()
-                        -- case mFlagging of
-                        --     Just flagging -> do
-                        --         let (Entity _ key) = flagging
-                        --         runDB $ delete key
-                        --     Nothing -> return ()
+                        runDB . deleteBy $ UniqueFlagMentor authId flaggedId
 
                     Flag -> do
                         currentTime <- liftIO getCurrentTime
-                        _ <- runDB $ insert FlagMentor
+                        _ <- runDB $ insertUnique FlagMentor
                             { flagMentorUser = authId
                             , flagMentorFlagging = flaggedId
                             , flagMentorCreated = currentTime
-
                             }
                         return ()
 

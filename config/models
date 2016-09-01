@@ -15,7 +15,7 @@ FlagMentor
     user           UserId
     flagging       UserId
     created        UTCTime
-    FlagMentorUnique user flagging
+    UniqueFlagMentor user flagging
     deriving Show
 Message
   closed         Bool
