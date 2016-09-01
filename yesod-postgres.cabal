@@ -24,6 +24,7 @@ library
                      Handler.Common
                      Handler.Home
                      Handler.Profile
+                     Handler.Sitemap
                      Handler.User
 
 
@@ -94,8 +95,8 @@ library
                  , random-shuffle
                  , text-icu
                  , utf8-string
-                 , yesod-paginator
                  , yesod-auth-oauth2
+                 , yesod-sitemap
 
 executable         yesod-postgres
     if flag(library-only)
