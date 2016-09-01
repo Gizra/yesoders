@@ -17,6 +17,11 @@ getProfileR = do
 
     let token = getValidToken csrf flaggedId action
 
+    let flagMessage =
+            case action of
+                Unflag -> "Unark as mentor" :: Text
+                Flag -> "Mark as mentor" :: Text
+
     defaultLayout $ do
         setTitle . toHtml $ userIdent user `mappend` "'s User page"
         $(widgetFile "user")
