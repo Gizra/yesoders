@@ -1,3 +1,4 @@
+{-# LANGUAGE DeriveGeneric #-}
 module Foundation where
 
 import Import.NoFoundation
@@ -41,11 +42,14 @@ data MenuTypes
     | NavbarRight MenuItem
 
 data FlagAction = Unflag | Flag
-    deriving (Enum, Eq, Read, Show)
+    deriving (Enum, Eq, Generic, Read, Show)
+
+instance ToJSON FlagAction where
 
 instance PathPiece FlagAction where
     fromPathPiece = readMaybe . unpack
     toPathPiece = pack . show
+
 
 -- This is where we define all of the routes in our application. For a full
 -- explanation of the syntax, please see:
