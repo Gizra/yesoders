@@ -5,7 +5,7 @@ import Yesod.Sitemap
 
 getSitemapR :: Handler TypedContent
 getSitemapR = do
-    users <- runDB $ selectList [] [Asc UserId]
+    users <- runDB $ selectList [UserBlocked ==. False] [Asc UserId]
     sitemapList $ map go users
     where
         go (Entity _ user) =

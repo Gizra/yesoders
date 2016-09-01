@@ -152,3 +152,8 @@ test-suite test
                  , classy-prelude
                  , classy-prelude-yesod
                  , aeson
+
+                 , bytestring
+                 , HUnit
+                 , text
+                 , wai-extra
