@@ -65,18 +65,28 @@ authenticateAs (Entity _ u) = do
         addPostParam "ident" $ userIdent u
         setUrl $ AuthR $ PluginR "dummy" []
 
+-- | Create an active user.
 createUser :: Text -> YesodExample App (Entity User)
 createUser ident = do
-    -- @todo: Make ident random
-    currentTime <- liftIO getCurrentTime
-    runDB $ insertEntity User
-        { userIdent = ident
-        , userEmail = ident ++ ("@example.com" :: Text)
-        , userFullName = Nothing
-        , userDesc = Nothing
-        , userAdmin = False
-        , userEmployment = Nothing
-        , userBlocked = False
-        , userEmailPublic = False
-        , userCreated = currentTime
-        }
+    insertUser ident True
+
+-- | Create a blocked user.
+createBlockedUser :: Text -> YesodExample App (Entity User)
+createBlockedUser ident =
+    insertUser ident False
+
+-- | Create a user.
+insertUser :: Text -> Bool -> YesodExample App (Entity User)
+insertUser ident isBlocked =
+  currentTime <- liftIO getCurrentTime
+  runDB $ insertEntity User
+      { userIdent = ident
+      , userEmail = ident ++ ("@example.com" :: Text)
+      , userFullName = Nothing
+      , userDesc = Nothing
+      , userAdmin = False
+      , userEmployment = Nothing
+      , userBlocked = False
+      , userEmailPublic = False
+      , userCreated = currentTime
+      }
