@@ -16,6 +16,12 @@ import Yesod.Auth            as X
 import Yesod.Default.Config2 (useEnv, loadYamlSettings)
 import Yesod.Test            as X
 
+import qualified Data.ByteString.Lazy.Char8 as BSL8
+import qualified Data.List as DL
+import qualified Data.Text.Lazy as TL
+import qualified Test.HUnit as HUnit
+import Network.Wai.Test hiding (assertHeader, assertNoHeader, request)
+
 runDB :: SqlPersistM a -> YesodExample App a
 runDB query = do
     app <- getTestYesod
@@ -58,6 +64,15 @@ getTables = do
 
     return $ map unSingle tables
 
+
+bodyNotContains :: String -> YesodExample site ()
+bodyNotContains text = withResponse $ \ res ->
+  liftIO $ HUnit.assertBool ("Expected body not to contain " ++ text) $
+    not $ contains (simpleBody res) text
+
+contains :: BSL8.ByteString -> String -> Bool
+contains a b = DL.isInfixOf b (TL.unpack $ decodeUtf8 a)
+
 authenticateAs :: Entity User -> YesodExample App ()
 authenticateAs (Entity _ u) = do
     request $ do
@@ -68,25 +83,25 @@ authenticateAs (Entity _ u) = do
 -- | Create an active user.
 createUser :: Text -> YesodExample App (Entity User)
 createUser ident = do
-    insertUser ident True
+    insertUser ident False
 
 -- | Create a blocked user.
 createBlockedUser :: Text -> YesodExample App (Entity User)
 createBlockedUser ident =
-    insertUser ident False
+    insertUser ident True
 
 -- | Create a user.
 insertUser :: Text -> Bool -> YesodExample App (Entity User)
-insertUser ident isBlocked =
-  currentTime <- liftIO getCurrentTime
-  runDB $ insertEntity User
-      { userIdent = ident
-      , userEmail = ident ++ ("@example.com" :: Text)
-      , userFullName = Nothing
-      , userDesc = Nothing
-      , userAdmin = False
-      , userEmployment = Nothing
-      , userBlocked = False
-      , userEmailPublic = False
-      , userCreated = currentTime
-      }
+insertUser ident isBlocked = do
+    currentTime <- liftIO getCurrentTime
+    runDB $ insertEntity User
+        { userIdent = ident
+        , userEmail = ident ++ ("@example.com" :: Text)
+        , userFullName = Nothing
+        , userDesc = Nothing
+        , userAdmin = False
+        , userEmployment = Nothing
+        , userBlocked = isBlocked
+        , userEmailPublic = False
+        , userCreated = currentTime
+        }

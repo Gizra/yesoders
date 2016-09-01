@@ -12,4 +12,7 @@ spec = withApp $ do
             statusIs 200
 
             let (Entity _ u) = user
+            let (Entity _ bu) = blockedUser
+
             bodyContains . unpack $ userIdent u
+            bodyNotContains . unpack $ userIdent bu
