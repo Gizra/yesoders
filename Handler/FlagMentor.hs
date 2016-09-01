@@ -26,6 +26,7 @@ getFlagMentorR flaggedId action token = do
             defaultLayout $ do
                 toWidget [hamlet|token is correct! Next action is #{show nextAction}, with token #{nextToken}|]
 
+-- @todo: How to generalize UserId, to accept any Entity ID?
 getValidToken :: Maybe Text -> UserId -> FlagAction -> Text
 getValidToken csrf flaggedId action =
     -- Calculate the token of the Entity ID along with the action.
