@@ -12,15 +12,18 @@ getProfileR = do
     csrf <- fmap reqToken getRequest
     let csrf' = fromMaybe "" csrf
 
-    let action = Unflag
+
+    -- @todo: Prevent own selection.
     let flaggedId = userId
 
-    let token = getValidToken csrf flaggedId action
+    mFlagging <- runDB . getBy $ UniqueFlagMentor userId flaggedId
 
-    let flagMessage =
-            case action of
-                Unflag -> "Unark as mentor" :: Text
-                Flag -> "Mark as mentor" :: Text
+    let (action, flagMessage) =
+            case mFlagging of
+                Just _ -> (Unflag, "Unark as mentor" :: Text)
+                Nothing -> (Flag, "Mark as mentor" :: Text)
+
+    let token = getValidToken csrf flaggedId action
 
     defaultLayout $ do
         setTitle . toHtml $ userIdent user `mappend` "'s User page"
