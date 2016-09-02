@@ -4,6 +4,11 @@ import Import
 
 import Utils.Flag (getFlagWidget)
 
+getProfileR :: Handler Html
+getProfileR = do
+    (userId, user) <- requireAuthPair
+    getUserR (userIdent user)
+
 getUserR :: Text -> Handler Html
 getUserR ident = do
     (Entity userId user) <- runDB . getBy404 $ UniqueUser ident
