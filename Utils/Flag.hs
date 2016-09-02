@@ -18,25 +18,29 @@ getFlagWidget :: ( ToBackendKey SqlBackend val
                  , PersistEntity a
                  , FlagMessage (Unique a)
                  )
-              => Key val
+              => Maybe (Key val)
               -> Key val
               -> (Key val -> Key val -> Unique a)
               -> Handler Widget
 getFlagWidget muid entityKey unique = do
-    let uniqueEntity = unique muid entityKey
-    mFlagging <- runDB $ getBy uniqueEntity
+    case muid of
+        Just uid -> do
+            let uniqueEntity = unique uid entityKey
+            mFlagging <- runDB $ getBy uniqueEntity
 
-    let action =
-            case mFlagging of
-                Just _ -> Unflag
-                Nothing -> Flag
+            let action =
+                    case mFlagging of
+                        Just _ -> Unflag
+                        Nothing -> Flag
 
-    if (flagAccess uniqueEntity action)
-        then do
-            let message = flagMessage uniqueEntity action
-            token <- getFlagTokenFromCsrf entityKey action
-            return [whamlet|<a href="@{FlagMentorR entityKey action token}">#{message}|]
-        else
+            if (flagAccess uniqueEntity action)
+                then do
+                    let message = flagMessage uniqueEntity action
+                    token <- getFlagTokenFromCsrf entityKey action
+                    return [whamlet|<a href="@{FlagMentorR entityKey action token}">#{message}|]
+                else
+                    return [whamlet||]
+        Nothing ->
             return [whamlet||]
 
 

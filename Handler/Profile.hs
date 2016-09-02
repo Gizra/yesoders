@@ -12,7 +12,7 @@ getProfileR = do
     -- @todo: Prevent own selection.
     let flaggedId = userId
 
-    flagWidget <- getFlagWidget userId flaggedId UniqueFlagMentor
+    flagWidget <- getFlagWidget (Just userId) flaggedId UniqueFlagMentor
 
     defaultLayout $ do
         setTitle . toHtml $ userIdent user `mappend` "'s User page"
