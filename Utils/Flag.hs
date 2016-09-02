@@ -31,11 +31,11 @@ getFlagWidget muid entityKey unique = do
                 Just _ -> Unflag
                 Nothing -> Flag
 
-    let message = messageByAction uniqueEntity action
+    let flagMessage = flagMessage uniqueEntity action
 
     token <- getFlagTokenFromCsrf entityKey action
 
-    return [whamlet|<a href="@{FlagMentorR entityKey action token}">#{message}|]
+    return [whamlet|<a href="@{FlagMentorR entityKey action token}">#{flagMessage}|]
 
 
 -- | Get flag token from the user's CSRF.
