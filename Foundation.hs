@@ -18,9 +18,6 @@ import qualified Data.Text.Encoding as TE
 import qualified Data.Char as C (isSpace, toUpper, toLower)
 import Data.Time
 
-
-
-
 -- | The foundation datatype for your application. This can be a good place to
 -- keep settings and values requiring initialization before your application
 -- starts running, such as database connections. Every handler will have
@@ -59,9 +56,10 @@ instance PathPiece FlagAction where
 class FlagMessage a where
     messageByAction :: a -> FlagAction -> Text
 
-instance FlagMessage (Key User) where
-    messageByAction _ Unflag = "Unflag user"
-    messageByAction _ Flag = "Flag user"
+
+instance FlagMessage (Unique FlagMentor) where
+    messageByAction _ Unflag = "Unflag mentor"
+    messageByAction _ Flag = "Flag mentor"
 
 
 -- This is where we define all of the routes in our application. For a full
