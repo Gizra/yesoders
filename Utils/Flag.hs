@@ -24,14 +24,16 @@ getFlagWidget :: ( ToBackendKey SqlBackend val
 getFlagWidget muid entityKey unique = do
     mFlagging <- runDB . getBy $ unique muid entityKey
 
-    let (action, flagMessage) =
+    let action =
             case mFlagging of
-                Just _ -> (Unflag, "Unark as mentor" :: Text)
-                Nothing -> (Flag, "Mark as mentor" :: Text)
+                Just _ -> Unflag
+                Nothing -> Flag
+
+    let message = messageByAction entityKey action
 
     token <- getFlagTokenFromCsrf entityKey action
 
-    return [whamlet|<a href="@{FlagMentorR entityKey action token}">#{flagMessage}|]
+    return [whamlet|<a href="@{FlagMentorR entityKey action token}">#{message}|]
 
 
 -- | Get flag token from the user's CSRF.

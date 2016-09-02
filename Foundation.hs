@@ -56,6 +56,13 @@ instance PathPiece FlagAction where
 
     toPathPiece = pack . (fmap C.toLower) . show
 
+class FlagMessage a where
+    messageByAction :: a -> FlagAction -> Text
+
+instance FlagMessage (Key User) where
+    messageByAction _ Unflag = "Unflag user"
+    messageByAction _ Flag = "Flag user"
+
 
 -- This is where we define all of the routes in our application. For a full
 -- explanation of the syntax, please see:
