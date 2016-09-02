@@ -63,7 +63,8 @@ instance FlagMessage (Unique FlagMentor) where
     flagMessage _ Flag = "Flag mentor"
 
     flagAccess _ Unflag = True
-    flagAccess _ Flag = True
+    -- Make sure user can't mark themself as own mentors.
+    flagAccess (UniqueFlagMentor uid flaggedId) Flag = uid /= flaggedId
 
 
 -- This is where we define all of the routes in our application. For a full
