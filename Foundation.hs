@@ -59,8 +59,8 @@ class FlagMessage a where
 
 
 instance FlagMessage (Unique FlagMentor) where
-    flagMessage _ Unflag = "Unflag mentor"
-    flagMessage _ Flag = "Flag mentor"
+    flagMessage _ Unflag = "Unmark as mentor"
+    flagMessage _ Flag = "Mark as mentor"
 
     flagAccess _ Unflag = True
     -- Make sure user can't mark themself as own mentors.

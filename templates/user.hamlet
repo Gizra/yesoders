@@ -15,7 +15,7 @@
         <div class="column">
             <div class="ui segment">
                 <div>
-                    Members for: #{memberFor}
+                    Members since: #{memberFor}
 
                 <div>
                     ^{flagWidget}
