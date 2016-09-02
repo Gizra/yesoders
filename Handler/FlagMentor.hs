@@ -2,18 +2,15 @@ module Handler.FlagMentor where
 
 import Import
 
+import Utils.Flag (getFlagTokenFromCsrf)
+
 
 getFlagMentorR :: UserId -> FlagAction-> Text -> Handler Value
 getFlagMentorR flaggedId action token = do
     _ <- runDB $ get404 flaggedId
     authId <- requireAuthId
 
-    csrf <- fmap reqToken getRequest
-    let csrf' = fromMaybe "" csrf
-    -- Calculate the token of the Entity ID along with the action.
-    -- We have to convert Text to ByteString, to md5, back to ByteString and
-    -- finish with converting back to Text.
-    let token' = getValidToken csrf flaggedId action
+    token' <- getFlagTokenFromCsrf flaggedId action
 
     if token' /= token
         then
@@ -36,7 +33,7 @@ getFlagMentorR flaggedId action token = do
                         return ()
 
             let nextAction = if action == Flag then Unflag else Flag
-            let nextToken = getValidToken csrf flaggedId nextAction
+            nextToken <- getFlagTokenFromCsrf flaggedId nextAction
 
             urlRender <- getUrlRender
 

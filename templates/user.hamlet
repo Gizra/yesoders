@@ -18,4 +18,4 @@
                     Members for: #{memberFor}
 
                 <div>
-                    <a href="@{FlagMentorR flaggedId action token}">#{flagMessage}
+                    ^{flagWidget}

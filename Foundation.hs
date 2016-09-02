@@ -15,9 +15,7 @@ import Yesod.Form.Jquery
 import qualified Yesod.Core.Unsafe as Unsafe
 import qualified Data.CaseInsensitive as CI
 import qualified Data.Text.Encoding as TE
-import Data.Char (isSpace)
-import Data.Digest.Pure.MD5
-import qualified Data.Text as T (append)
+import qualified Data.Char as C (isSpace, toUpper, toLower)
 import Data.Time
 
 
@@ -51,8 +49,12 @@ data FlagAction = Unflag | Flag
 instance ToJSON FlagAction where
 
 instance PathPiece FlagAction where
-    fromPathPiece = readMaybe . unpack
-    toPathPiece = pack . show
+    fromPathPiece = readMaybe . capitalized .unpack
+        where capitalized :: String -> String
+              capitalized (x : xs) = C.toUpper x : fmap C.toLower xs
+              capitalized [] = []
+
+    toPathPiece = pack . (fmap C.toLower) . show
 
 
 -- This is where we define all of the routes in our application. For a full
@@ -334,7 +336,7 @@ humanReadableTimeDiff curTime oldTime =
 
     old = utcToLocalTime utc oldTime
 
-    trim = f . f where f = reverse . dropWhile isSpace
+    trim = f . f where f = reverse . dropWhile C.isSpace
 
     dow           = trim $! formatTime defaultTimeLocale "%l:%M %p on %A" old
     thisYear      = trim $! formatTime defaultTimeLocale "%b %e" old
@@ -352,12 +354,3 @@ humanReadableTimeDiff curTime oldTime =
               | weeks d < 5    = i2s (weeks d)  ++ " weeks ago"
               | years d < 1    = thisYear
               | otherwise      = previousYears
-
-
-getValidToken :: Maybe Text -> Key record -> FlagAction -> Text
-getValidToken csrf flaggedId action =
-  -- Calculate the token of the Entity ID along with the action.
-  -- We have to convert Text to ByteString, to md5, back to ByteString and
-  -- finish with converting back to Text.
-  pack $ show $ md5 . fromStrict $ encodeUtf8 $ csrf' `T.append` (pack $ show action) :: Text
-  where csrf' = fromMaybe "" csrf
