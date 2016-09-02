@@ -31,7 +31,7 @@ getFlagWidget muid entityKey unique = do
                 Just _ -> Unflag
                 Nothing -> Flag
 
-    if (access uniqueEntity action)
+    if (flagAccess uniqueEntity action)
         then do
             let message = flagMessage uniqueEntity action
             token <- getFlagTokenFromCsrf entityKey action

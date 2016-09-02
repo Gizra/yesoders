@@ -55,15 +55,15 @@ instance PathPiece FlagAction where
 
 class FlagMessage a where
     flagMessage :: a -> FlagAction -> Text
-    access :: a -> FlagAction -> Bool
+    flagAccess :: a -> FlagAction -> Bool
 
 
 instance FlagMessage (Unique FlagMentor) where
     flagMessage _ Unflag = "Unflag mentor"
     flagMessage _ Flag = "Flag mentor"
 
-    access _ Unflag = True
-    access _ Flag = True
+    flagAccess _ Unflag = True
+    flagAccess _ Flag = True
 
 
 -- This is where we define all of the routes in our application. For a full
