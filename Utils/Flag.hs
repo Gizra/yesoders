@@ -11,14 +11,18 @@ import qualified Data.Text as T (append)
 import Database.Persist.Sql (fromSqlKey)
 
 -- @todo: Get the flagging messages as argument
--- (Key record -> Key record -> Unique b)
-getFlagWidget :: ( ToBackendKey SqlBackend val, PersistEntity val, val ~ User)
+getFlagWidget :: ( ToBackendKey SqlBackend val
+                 , PersistEntity val
+                 , val ~ User
+                 , PersistEntityBackend a ~ SqlBackend
+                 , PersistEntity a
+                 )
               => Key val
-              -> Entity val
+              -> Key val
+              -> (Key val -> Key val -> Unique a)
               -> Handler Widget
-getFlagWidget muid entity = do
-    let (Entity entityKey entityVal) = entity
-    mFlagging <- runDB . getBy $ UniqueFlagMentor muid entityKey
+getFlagWidget muid entityKey unique = do
+    mFlagging <- runDB . getBy $ unique muid entityKey
 
     let (action, flagMessage) =
             case mFlagging of
