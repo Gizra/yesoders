@@ -56,8 +56,6 @@ getFlagMentorR flaggedId action token = do
                             -- Return an empty object, but with HTTP response code
                             -- 200.
                             return $ object []
-
-
-
         else
+            -- User reached this route, but has no access to the action.
             notFound
