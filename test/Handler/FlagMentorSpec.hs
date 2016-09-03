@@ -18,4 +18,14 @@ spec = withApp $ do
             let (Entity _ user) = userEntity
 
             get $ UserR (userIdent user)
+            htmlCount ".flag-wrapper" 0
+
+        it "asserts flag link is showen to autheenticated users" $ do
+            userEntity <- createUser "foo"
+            let (Entity _ user) = userEntity
+
+            userEntity' <- createUser "bar"
+            authenticateAs userEntity'
+
+            get $ UserR (userIdent user)
             htmlCount ".flag-wrapper" 1
