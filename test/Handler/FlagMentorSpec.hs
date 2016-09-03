@@ -23,6 +23,28 @@ spec = withApp $ do
             get $ UserR (userIdent user)
             htmlCount ".flag-wrapper" 0
 
+        -- it "asserts route access for valid arguments" $ do
+        --     userEntity <- createUser "foo"
+        --     authenticateAs userEntity
+        --
+        --     userEntity' <- createUser "bar"
+        --     let (Entity flaggedId _) = userEntity'
+        --
+        --     token <- getFlagTokenFromCsrf flaggedId Flag
+        --
+        --     get $ FlagMentorR flaggedId Flag token
+        --     statusIs 200
+
+        it "asserts route no access for invalid arguments" $ do
+            userEntity <- createUser "foo"
+            authenticateAs userEntity
+
+            userEntity' <- createUser "bar"
+            let (Entity flaggedId _) = userEntity'
+
+            get $ FlagMentorR flaggedId Flag "1234"
+            statusIs 404
+
         it "asserts flag link is showen to autheenticated users" $ do
             userEntity <- createUser "foo"
             let (Entity _ user) = userEntity
@@ -38,5 +60,6 @@ spec = withApp $ do
             let entityKey = toSqlKey 1 :: UserId
             let token = getFlagToken csrf entityKey Flag
 
+            -- MD5: 1234Flag1
             let expected = "58fbe9c10ce55a240b0b94b5bd619f18" :: Text
             assertEq "Token is valid" expected token
