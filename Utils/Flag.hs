@@ -43,8 +43,9 @@ getFlagWidget muid entityKey unique = do
                             $(function() {
                                 $('.flag').click(function(e) {
                                     e.preventDefault();
-                                    var url = $(this).attr('href');
                                     var $self = $(this);
+                                    var url = $self.attr('href');
+
                                     // Call via Ajax.
                                     $.ajax ({
                                         type: "GET",
