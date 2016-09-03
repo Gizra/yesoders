@@ -38,10 +38,13 @@ getFlagWidget muid entityKey unique = do
                     let message = flagMessage uniqueEntity action
                     token <- getFlagTokenFromCsrf entityKey action
                     return $ Just $ do
-                        toWidget [whamlet|<a class="flag action-#{show action}" href="@{FlagMentorR entityKey action token}">#{message}|]
+                        toWidget [whamlet|
+                            <div class="flag-wrapper action-#{toLower $ show action}">
+                                <a href="@{FlagMentorR entityKey action token}">#{message}
+                        |]
                         toWidget [julius|
                             $(function() {
-                                $('.flag').click(function(e) {
+                                $('.flag-wrapper a').click(function(e) {
                                     e.preventDefault();
                                     var $self = $(this);
                                     var url = $self.attr('href');
@@ -53,6 +56,11 @@ getFlagWidget muid entityKey unique = do
                                         success: function (res) {
                                             $self.attr('href', res.url);
                                             $self.html(res.message);
+                                            // Change the action-[flag|unflag] class from the wrapper.
+                                            $self.parent()
+                                                .removeClass('action-flag')
+                                                .removeClass('action-unflag')
+                                                .addClass('action-' + res.action)
                                         },
                                         error:   function (res) { console.log(res); }
                                     });
