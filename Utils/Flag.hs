@@ -54,6 +54,11 @@ getFlagWidget muid entityKey unique = do
                                         type: "GET",
                                         url: url,
                                         success: function (res) {
+                                            if (!res.length) {
+                                                // Request was succesful, however the user doesn't
+                                                // have access to the opposite action, so remove the flag.
+                                                $self.parent().remove();
+                                            }
                                             $self.attr('href', res.url);
                                             $self.html(res.message);
                                             // Change the action-[flag|unflag] class from the wrapper.
@@ -62,7 +67,7 @@ getFlagWidget muid entityKey unique = do
                                                 .removeClass('action-unflag')
                                                 .addClass('action-' + res.action)
                                         },
-                                        error:   function (res) { console.log(res); }
+                                        error: function (res) { console.log(res); }
                                     });
                                 });
                             });
