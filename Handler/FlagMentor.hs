@@ -2,6 +2,7 @@ module Handler.FlagMentor where
 
 import Import
 
+import qualified Data.Char as C (toLower)
 import Utils.Flag (getFlagTokenFromCsrf)
 
 
@@ -42,7 +43,7 @@ getFlagMentorR flaggedId action token = do
 
                     -- Return JSON with the link to the next action.
                     return $ object
-                        [ "action" .= nextAction
+                        [ "action" .= String (pack $ fmap C.toLower $ show nextAction)
                         , "url" .= String (urlRender $ FlagMentorR flaggedId nextAction nextToken)
                         , "message" .= String (flagMessage uniqueEntity nextAction)
                         ]
