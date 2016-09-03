@@ -54,7 +54,7 @@ getFlagWidget muid entityKey unique = do
                                         type: "GET",
                                         url: url,
                                         success: function (res) {
-                                            if (!res.length) {
+                                            if (Object.keys(res).length === 0 && res.constructor === Object) {
                                                 // Request was succesful, however the user doesn't
                                                 // have access to the opposite action, so remove the flag.
                                                 $self.parent().remove();
