@@ -17,7 +17,7 @@ getUserR ident = do
 
     muid <- maybeAuthId
 
-    flagWidget <- getFlagWidget muid userId UniqueFlagMentor
+    mflagWidget <- getFlagWidget muid userId UniqueFlagMentor
 
     defaultLayout $ do
         setTitle . toHtml $ userIdent user `mappend` "'s User page"

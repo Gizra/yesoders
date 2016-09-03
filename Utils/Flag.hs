@@ -21,7 +21,7 @@ getFlagWidget :: ( ToBackendKey SqlBackend val
               => Maybe (Key val)
               -> Key val
               -> (Key val -> Key val -> Unique a)
-              -> Handler Widget
+              -> Handler (Maybe Widget)
 getFlagWidget muid entityKey unique = do
     case muid of
         Just uid -> do
@@ -37,11 +37,11 @@ getFlagWidget muid entityKey unique = do
                 then do
                     let message = flagMessage uniqueEntity action
                     token <- getFlagTokenFromCsrf entityKey action
-                    return [whamlet|<a href="@{FlagMentorR entityKey action token}">#{message}|]
+                    return $ Just [whamlet|<a href="@{FlagMentorR entityKey action token}">#{message}|]
                 else
-                    return [whamlet||]
+                    return Nothing
         Nothing ->
-            return [whamlet||]
+            return Nothing
 
 
 -- | Get flag token from the user's CSRF.

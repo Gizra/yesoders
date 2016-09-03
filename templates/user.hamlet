@@ -17,5 +17,6 @@
                 <div>
                     Members since: #{memberFor}
 
-                <div>
-                    ^{flagWidget}
+                $maybe flagWidget <- mflagWidget
+                    <div>
+                        ^{flagWidget}
