@@ -38,8 +38,23 @@ getFlagWidget muid entityKey unique = do
                     let message = flagMessage uniqueEntity action
                     token <- getFlagTokenFromCsrf entityKey action
                     return $ Just $ do
-                        toWidget [whamlet|<a href="@{FlagMentorR entityKey action token}">#{message}|]
-                        toWidget [lucius|h1 { color: green } |]
+                        toWidget [whamlet|<a class="flag action-#{show action}" href="@{FlagMentorR entityKey action token}">#{message}|]
+                        toWidget [julius|
+                            $(function() {
+                                $('.flag').click(function(e) {
+                                    e.preventDefault();
+                                    var url = $(this).attr('href');
+                                    // Call via Ajax.
+                                    $.ajax ({
+                                        type: "GET",
+                                        url: url,
+                                        success: function (res) { console.log(res); },
+                                        error:   function (res) { console.log(res); }
+                                    });
+                                });
+                            });
+
+                        |]
                 else
                     return Nothing
         Nothing ->
