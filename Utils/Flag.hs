@@ -10,7 +10,7 @@ import Data.Digest.Pure.MD5
 import qualified Data.Text as T (append)
 import Database.Persist.Sql (fromSqlKey)
 
--- @todo: Get the flagging messages as argument
+-- | Get teh flag widget, if the current user has access to it.
 getFlagWidget :: ( ToBackendKey SqlBackend val
                  , PersistEntity val
                  , val ~ User
@@ -18,7 +18,7 @@ getFlagWidget :: ( ToBackendKey SqlBackend val
                  , PersistEntity a
                  , FlagMessage (Unique a)
                  )
-              => Maybe (Key val)
+              => Maybe (Key val) -- If the user is anonymous, we return Nothing
               -> Key val
               -> (Key val -> Key val -> Unique a)
               -> Handler (Maybe Widget)
@@ -86,6 +86,7 @@ getFlagTokenFromCsrf entityKey action = do
     return $ getFlagToken csrf entityKey action
 
 
+-- | Get flag token, with a provided CSRF token.
 getFlagToken :: ToBackendKey SqlBackend record => Maybe Text -> Key record -> FlagAction -> Text
 getFlagToken csrf entityKey action =
     -- Calculate the token of the Entity ID along with the action.
