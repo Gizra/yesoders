@@ -44,6 +44,7 @@ getFlagMentorR flaggedId action token = do
                     return $ object
                         [ "action" .= nextAction
                         , "url" .= String (urlRender $ FlagMentorR flaggedId nextAction nextToken)
+                        , "message" .= String (flagMessage uniqueEntity nextAction)
                         ]
         else
             -- @todo: Change to access denied.
