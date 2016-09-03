@@ -18,7 +18,6 @@ getFlagMentorR flaggedId action token = do
         then
             if token' /= token
                 then
-                    -- defaultLayout $ toWidget [hamlet|token should be #{token'}|]
                     notFound
                 else do
                     -- Insert a new flagging or delete an existing one, baesd on the
@@ -48,5 +47,4 @@ getFlagMentorR flaggedId action token = do
                         , "message" .= String (flagMessage uniqueEntity nextAction)
                         ]
         else
-            -- @todo: Change to access denied.
             notFound
