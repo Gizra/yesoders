@@ -43,7 +43,7 @@ getFlagMentorR flaggedId action token = do
                     -- Return JSON with the link to the next action.
                     return $ object
                         [ "action" .= nextAction
-                        -- , "data" .= urlRender $ FlagMentorR flaggedId nextAction nextToken
+                        , "url" .= String (urlRender $ FlagMentorR flaggedId nextAction nextToken)
                         ]
         else
             -- @todo: Change to access denied.
