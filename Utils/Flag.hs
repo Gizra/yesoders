@@ -37,7 +37,9 @@ getFlagWidget muid entityKey unique = do
                 then do
                     let message = flagMessage uniqueEntity action
                     token <- getFlagTokenFromCsrf entityKey action
-                    return $ Just [whamlet|<a href="@{FlagMentorR entityKey action token}">#{message}|]
+                    return $ Just $ do
+                        toWidget [whamlet|<a href="@{FlagMentorR entityKey action token}">#{message}|]
+                        toWidget [lucius|h1 { color: green } |]
                 else
                     return Nothing
         Nothing ->
