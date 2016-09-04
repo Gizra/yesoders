@@ -6,6 +6,6 @@ database:
   # something like:
   #
   #   database: "_env:PGDATABASE:yesod-postgres_LOWER_test"
-  database: yesod_test
+  database: yesoders_test
 
 development: true
