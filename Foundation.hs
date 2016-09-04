@@ -101,22 +101,27 @@ instance Yesod App where
                     , menuItemRoute = HomeR
                     , menuItemAccessCallback = True
                     }
-                  , NavbarLeft $ MenuItem
+                , NavbarLeft $ MenuItem
                     { menuItemLabel = "Your Profile"
                     , menuItemRoute = ProfileR
                     , menuItemAccessCallback = isJust muser
                     }
-                  , NavbarRight $ MenuItem
+                , NavbarRight $ MenuItem
                     { menuItemLabel = "GitHub Login"
                     , menuItemRoute = AuthR $ PluginR "github" ["forward"]
                     , menuItemAccessCallback = isNothing muser
                     }
-                  , NavbarRight $ MenuItem
+                , NavbarRight $ MenuItem
+                    { menuItemLabel = "Dummy Login"
+                    , menuItemRoute = AuthR LoginR
+                    , menuItemAccessCallback = (appDevelopment $ appSettings master) && isNothing muser
+                    }
+                , NavbarRight $ MenuItem
                     { menuItemLabel = "Logout"
                     , menuItemRoute = AuthR LogoutR
                     , menuItemAccessCallback = isJust muser
                     }
-                  ]
+                ]
 
         let navbarLeftMenuItems = [x | NavbarLeft x <- menuItems]
         let navbarRightMenuItems = [x | NavbarRight x <- menuItems]
