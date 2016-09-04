@@ -65,3 +65,20 @@ extra-package-dbs: []
 #
 # Allow a newer minor version of GHC than the snapshot specifies
 # compiler-check: newer-minor
+
+# Build using Docker. Will use the default stack-build image, which
+# includes build tools but not precompiled libraries.
+docker:
+  enable: true
+
+# Generate a Docker image
+image:
+  container:
+    # New image will be called snoyberg/yesodweb
+    name: gizra/yesoders
+    # Base it on the stack-run images
+    base: fpco/stack-run
+    # Include some config and static files in the image
+    add:
+      config: /app/config
+      static: /app/static
