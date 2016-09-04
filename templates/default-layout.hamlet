@@ -7,7 +7,7 @@
     <div class="right menu">
       <div class="item">
         $forall MenuItem label route _ <- navbarRightFilteredMenuItems
-          <a class="ui inverted button" :Just route == mcurrentRoute:.active href="@{route}">#{label}
+          <a class="ui button" :Just route == mcurrentRoute:.active href="@{route}">#{label}
 
 <!-- Sidebar Menu -->
 <div class="ui vertical inverted sidebar menu">
