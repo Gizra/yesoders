@@ -91,6 +91,7 @@ library
                  , wai
 
                  , blaze-html
+                 , foreign-store
                  , pureMD5
                  , random
                  , random-shuffle
