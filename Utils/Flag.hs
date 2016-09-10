@@ -10,7 +10,7 @@ import Data.Digest.Pure.MD5
 import qualified Data.Text as T (append)
 import Database.Persist.Sql (fromSqlKey)
 
--- | Get teh flag widget, if the current user has access to it.
+-- | Get the flag widget, if the current user has access to it.
 getFlagWidget :: ( ToBackendKey SqlBackend val
                  , PersistEntity val
                  , val ~ User
