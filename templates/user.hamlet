@@ -15,4 +15,8 @@
         <div class="column">
             <div class="ui segment">
                 <div>
-                    Members for: #{memberFor}
+                    Members since: #{memberFor}
+
+                $maybe flagWidget <- mflagWidget
+                    <div>
+                        ^{flagWidget}

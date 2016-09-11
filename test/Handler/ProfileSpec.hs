@@ -22,7 +22,7 @@ spec = withApp $ do
         get ProfileR
         let (Entity _ u) = user
         -- Member for
-        htmlAnyContain ".ui.segment div" "Members for"
+        htmlAnyContain ".ui.segment div" "Members since"
 
         -- User's GitHub name
         htmlAnyContain "a.header" . unpack $ userIdent u

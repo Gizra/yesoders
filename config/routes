@@ -5,6 +5,11 @@
 /robots.txt RobotsR GET
 
 / HomeR GET
-/profile ProfileR GET POST
+
+/profile ProfileR GET
+
 /user/#Text UserR GET
+
+/flag/mentor/#UserId/#FlagAction/#Text FlagMentorR GET
+
 /sitemap.xml SitemapR GET

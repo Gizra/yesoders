@@ -1,9 +1,11 @@
+{-# LANGUAGE DeriveGeneric #-}
 module Foundation where
 
 import Import.NoFoundation
 import Database.Persist.Sql (ConnectionPool, runSqlPool)
 import Text.Hamlet          (hamletFile)
 import Text.Jasmine         (minifym)
+import Text.Read            (readMaybe)
 import Yesod.Auth.Dummy
 import Yesod.Auth.OAuth2.Github
 import Yesod.Default.Util   (addStaticContentExternal)
@@ -13,9 +15,8 @@ import Yesod.Form.Jquery
 import qualified Yesod.Core.Unsafe as Unsafe
 import qualified Data.CaseInsensitive as CI
 import qualified Data.Text.Encoding as TE
-import Data.Char (isSpace)
+import qualified Data.Char as C (isSpace, toUpper, toLower)
 import Data.Time
-
 
 -- | The foundation datatype for your application. This can be a good place to
 -- keep settings and values requiring initialization before your application
@@ -38,6 +39,33 @@ data MenuItem = MenuItem
 data MenuTypes
     = NavbarLeft MenuItem
     | NavbarRight MenuItem
+
+data FlagAction = Unflag | Flag
+    deriving (Enum, Eq, Generic, Read, Show)
+
+instance ToJSON FlagAction where
+
+instance PathPiece FlagAction where
+    fromPathPiece = readMaybe . capitalized .unpack
+        where capitalized :: String -> String
+              capitalized (x : xs) = C.toUpper x : fmap C.toLower xs
+              capitalized [] = []
+
+    toPathPiece = pack . (fmap C.toLower) . show
+
+class FlagMessage a where
+    flagMessage :: a -> FlagAction -> Text
+    flagAccess :: a -> FlagAction -> Bool
+
+
+instance FlagMessage (Unique FlagMentor) where
+    flagMessage _ Unflag = "Unmark as mentor"
+    flagMessage _ Flag = "Mark as mentor"
+
+    flagAccess _ Unflag = True
+    -- Make sure user can't mark themself as own mentors.
+    flagAccess (UniqueFlagMentor uid flaggedId) Flag = uid /= flaggedId
+
 
 -- This is where we define all of the routes in our application. For a full
 -- explanation of the syntax, please see:
@@ -156,6 +184,7 @@ instance Yesod App where
         return $ case mu of
             Nothing -> Authorized
             Just _ -> Unauthorized "As a logged in user, you cannot re-login. You must Logout first."
+    isAuthorized (FlagMentorR _ _ _) _ = isAuthenticated
     isAuthorized ProfileR _ = isAuthenticated
 
     -- This function creates static content files in the static folder
@@ -322,7 +351,7 @@ humanReadableTimeDiff curTime oldTime =
 
     old = utcToLocalTime utc oldTime
 
-    trim = f . f where f = reverse . dropWhile isSpace
+    trim = f . f where f = reverse . dropWhile C.isSpace
 
     dow           = trim $! formatTime defaultTimeLocale "%l:%M %p on %A" old
     thisYear      = trim $! formatTime defaultTimeLocale "%b %e" old

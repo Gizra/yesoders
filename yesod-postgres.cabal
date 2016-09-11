@@ -22,10 +22,11 @@ library
                      Settings
                      Settings.StaticFiles
                      Handler.Common
+                     Handler.FlagMentor
                      Handler.Home
-                     Handler.Profile
                      Handler.Sitemap
                      Handler.User
+                     Utils.Flag
 
 
     if flag(dev) || flag(library-only)

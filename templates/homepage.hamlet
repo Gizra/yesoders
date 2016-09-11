@@ -18,4 +18,4 @@
                 <div class="image">
                     <img src="https://github.com/#{userIdent user}.png?s=90">
                 <div class="content">
-                    <a class="header">@#{userIdent user}
+                    <a href="@{UserR $ userIdent user}" class="header">@#{userIdent user}
