@@ -22,9 +22,8 @@
                         ^{flagWidget}
 
         <div class="column">
-            <div class="ui segment">
+            <div class="ui segment my-mentors">
                 $forall (E.Value userId, E.Value userIdent) <- mentors
-                    <div class="ui card">
-                        <div class="image">
-                            <a href="@{UserR userIdent}">
-                                <img src="https://github.com/#{userIdent}.png?s=40">
+                    <div class="image">
+                        <a href="@{UserR userIdent}">
+                            <img src="https://github.com/#{userIdent}.png?size=50" data-tooltip="#{userIdent}">
