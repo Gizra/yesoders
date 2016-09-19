@@ -23,7 +23,9 @@
 
         <div class="column">
             <div class="ui segment my-mentors">
+                <h2>Mentors
                 $forall (E.Value userId, E.Value userIdent) <- mentors
                     <div class="image">
                         <a href="@{UserR userIdent}">
-                            <img src="https://github.com/#{userIdent}.png?size=50" data-tooltip="#{userIdent}">
+                            <div class="image-wrapper" data-tooltip=#{userIdent} data-inverted="" data-position="right center">
+                                <img src="https://github.com/#{userIdent}.png?size=50">

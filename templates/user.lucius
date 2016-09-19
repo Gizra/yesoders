@@ -1,3 +1,7 @@
 .my-mentors img {
     width: 50px;
 }
+
+.image-wrapper {
+    width: 50px;
+}
