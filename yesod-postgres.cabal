@@ -91,6 +91,7 @@ library
                  , wai
 
                  , blaze-html
+                 , esqueleto
                  , foreign-store
                  , pureMD5
                  , random

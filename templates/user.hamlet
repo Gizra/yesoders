@@ -20,3 +20,12 @@
                 $maybe flagWidget <- mflagWidget
                     <div>
                         ^{flagWidget}
+
+        <div class="column">
+            <div class="ui segment my-mentors">
+                <h2>Mentors
+                $forall (E.Value userId, E.Value userIdent) <- mentors
+                    <div class="image">
+                        <a href="@{UserR userIdent}">
+                            <div class="image-wrapper" data-tooltip=#{userIdent} data-inverted="" data-position="right center">
+                                <img src="https://github.com/#{userIdent}.png?size=50">

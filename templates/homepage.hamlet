@@ -16,6 +16,7 @@
         $forall Entity _ user  <- users
             <div class="card">
                 <div class="image">
-                    <img src="https://github.com/#{userIdent user}.png?s=90">
+                    <img src="https://github.com/#{userIdent user}.png?size=200">
+
                 <div class="content">
                     <a href="@{UserR $ userIdent user}" class="header">@#{userIdent user}
