@@ -2,13 +2,19 @@
     <h1>
         #{userIdent user}
 
+    <div class="ui tabular menu">
+        <a class="item active" href="@{UserR ident}">
+            View
+        <a class="item" href="@{EditUserR ident}">
+            Edit
+
 <div class="ui container">
     <div class="ui three column grid">
         <div class="column">
             <div class="ui segment">
                 <div class="ui card">
                     <div class="image">
-                        <img src="https://github.com/#{userIdent user}.png?s=90">
+                        <img src="https://github.com/#{ident}.png?s=90">
                     <div class="content">
                         <a class="header">@#{userIdent user}
 
