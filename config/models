@@ -17,12 +17,6 @@ FlagMentor
     created        UTCTime
     UniqueFlagMentor user flagging
     deriving Show
-Message
-  closed         Bool
-  when           UTCTime
-  from           UserId Maybe
-  regarding      UserId Maybe
-  text           Textarea
 News
   when           UTCTime
   title          Text
@@ -38,30 +32,3 @@ Job
   desc           Textarea
   descHtml       Html Maybe
   open           Bool default=true
-Team
-  name           Text
-  desc           Html
-  UniqueTeam     name
-TeamUser
-  team           TeamId
-  user           UserId
-  status         TeamUserStatus
-  UniqueTeamUser team user
-TeamNews
-  team           TeamId
-  when           UTCTime
-  title          Text
-  content        Html
-  url            Text
-Topic
-  team           TeamId
-  created        UTCTime
-  type           TopicType
-  status         TopicStatus
-  creator        UserId Maybe
-  title          Text
-TopicMessage
-  topic          TopicId
-  created        UTCTime
-  creator        UserId Maybe
-  content        Html
