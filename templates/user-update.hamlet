@@ -1,0 +1,10 @@
+<div class="ui container">
+    <div class="ui tabular menu">
+        <a class="item" href="@{UserR ident}">
+            View
+        <a class="item active" href="@{EditUserR ident}">
+            Edit
+
+    <form class="ui form" method=post action=@{EditUserR ident} enctype=#{enctype}>
+        ^{widget}
+        <button.ui.primary.button>Update
