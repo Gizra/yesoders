@@ -1,6 +1,7 @@
 module Handler.EditUser where
 
 import Import
+import Model.Types
 
 getEditUserR :: Text -> Handler Html
 getEditUserR ident = do
@@ -34,12 +35,13 @@ userForm ident user = renderSematnicUiDivs $ User
     <*> pure (userEmail user)
     <*> aopt textField "Full name" (Just $ userFullName user)
     <*> aopt textareaField "Description" (Just $ userDesc user)
-    <*> areq checkBoxField "Admin"  (Just $ userAdmin user)
-    <*> areq (selectField optionsEnum) (selectSettings "Employment") (Just $ userEmployment user)
+    <*> areq checkBoxField "Admin" (Just $ userAdmin user)
+    <*> areq (selectFieldList empOpts) (selectSettings "Employment") (Just $ userEmployment user)
     <*> areq checkBoxField "Blocked"  (Just $ userBlocked user)
     <*> areq checkBoxField "Public email"  (Just $ userEmailPublic user)
     <*> pure (userCreated user)
     where
+        empOpts = map (pack . prettyEmployment &&& id) [minBound..maxBound] :: [(Text, Employment)]
         selectSettings label =
             FieldSettings
                 { fsLabel = label
