@@ -4,7 +4,7 @@ User
     fullName       Text Maybe
     desc           Textarea Maybe
     admin          Bool default=false
-    employment     Employment Maybe
+    employment     Employment
     blocked        Bool default=false
     emailPublic    Bool default=false
     created        UTCTime

@@ -35,7 +35,7 @@ userForm ident user = renderSematnicUiDivs $ User
     <*> aopt textField "Full name" (Just $ userFullName user)
     <*> aopt textareaField "Description" (Just $ userDesc user)
     <*> areq checkBoxField "Admin"  (Just $ userAdmin user)
-    <*> aopt (selectField optionsEnum) (selectSettings "Employment") (Just $ userEmployment user)
+    <*> areq (selectField optionsEnum) (selectSettings "Employment") (Just $ userEmployment user)
     <*> areq checkBoxField "Blocked"  (Just $ userBlocked user)
     <*> areq checkBoxField "Public email"  (Just $ userEmailPublic user)
     <*> pure (userCreated user)

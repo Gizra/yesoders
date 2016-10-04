@@ -17,6 +17,7 @@ import qualified Data.CaseInsensitive as CI
 import qualified Data.Text.Encoding as TE
 import qualified Data.Char as C (isSpace, toUpper, toLower)
 import Data.Time
+import Model.Types
 
 -- | The foundation datatype for your application. This can be a good place to
 -- keep settings and values requiring initialization before your application
@@ -289,7 +290,7 @@ instance YesodAuth App where
                     , userFullName = fullName
                     , userDesc = Nothing
                     , userAdmin = False
-                    , userEmployment = Nothing
+                    , userEmployment = NotLooking
                     , userBlocked = False
                     , userEmailPublic = False
                     , userCreated = currentTime
