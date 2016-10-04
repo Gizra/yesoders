@@ -179,7 +179,7 @@ instance Yesod App where
     isAuthorized (UserR _) _ = return Authorized
 
     isAuthorized (AuthR LogoutR) _ = isAuthenticated
-    isAuthorized (EditUserR _ ) _ = isAuthenticated
+    isAuthorized (EditUserR ident ) _ = isOwnerOrAdmin ident
     isAuthorized (AuthR _) _ = do
         mu <- maybeAuthId
         return $ case mu of
@@ -223,8 +223,9 @@ isAuthenticated = do
         Nothing -> Unauthorized "You must login to access this page"
         Just _ -> Authorized
 
-isOwnerOrAdmin :: User -> Handler AuthResult
-isOwnerOrAdmin entity = do
+isOwnerOrAdmin :: Text -> Handler AuthResult
+isOwnerOrAdmin ident = do
+    (Entity _ entity) <- runDB . getBy404 $ UniqueUser ident
     mu <- maybeAuth
     return $ case mu of
         Nothing -> Unauthorized "You must login to access this page"
