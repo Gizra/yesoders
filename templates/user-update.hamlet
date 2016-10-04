@@ -1,4 +1,7 @@
 <div class="ui container">
+    <h1>
+        #{userIdent user}
+
     <div class="ui tabular menu">
         <a class="item" href="@{UserR ident}">
             View
