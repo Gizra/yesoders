@@ -7,13 +7,18 @@ getEditUserR :: Text -> Handler Html
 getEditUserR ident = do
     (Entity _ user) <- runDB . getBy404 $ UniqueUser ident
 
-    (widget, enctype) <- generateFormPost $ userForm ident user
+    mcurrentUser <- maybeAuth
+
+    (widget, enctype) <- generateFormPost $ userForm ident user mcurrentUser
     defaultLayout $(widgetFile "user-update")
 
 postEditUserR :: Text -> Handler Html
 postEditUserR ident = do
     (Entity userId user) <- runDB . getBy404 $ UniqueUser ident
-    ((result, widget), enctype) <- runFormPost $ userForm ident user
+
+    mcurrentUser <- maybeAuth
+
+    ((result, widget), enctype) <- runFormPost $ userForm ident user mcurrentUser
     case result of
         FormSuccess user' -> do
             _ <- runDB $ replace userId user'
@@ -29,18 +34,28 @@ postEditUserR ident = do
             |]
 
 
-userForm :: Text -> User -> Form User
-userForm ident user = renderSematnicUiDivs $ User
+userForm :: Text -> User -> Maybe (Entity User) -> Form User
+userForm ident user mcurrentUser = renderSematnicUiDivs $ User
     <$> pure ident
     <*> pure (userEmail user)
     <*> aopt textField "Full name" (Just $ userFullName user)
     <*> aopt textareaField "Description" (Just $ userDesc user)
-    <*> areq checkBoxField "Admin" (Just $ userAdmin user)
+    <*> adminCheckBox (areq checkBoxField "Admin" (Just $ userAdmin user)) (userAdmin user)
     <*> areq (selectFieldList empOpts) (selectSettings "Employment") (Just $ userEmployment user)
-    <*> areq checkBoxField "Blocked"  (Just $ userBlocked user)
+    <*> adminCheckBox (areq checkBoxField "Blocked"  (Just $ userBlocked user)) (userBlocked user)
     <*> areq checkBoxField "Public email"  (Just $ userEmailPublic user)
     <*> pure (userCreated user)
     where
+        adminCheckBox field val =
+            case mcurrentUser of
+                Nothing -> pure val
+                Just (Entity _ currentUser) ->
+                        if (userAdmin currentUser)
+                            then
+                                field
+                            else
+                                pure val
+
         empOpts = map (pack . prettyEmployment &&& id) [minBound..maxBound] :: [(Text, Employment)]
         selectSettings label =
             FieldSettings
