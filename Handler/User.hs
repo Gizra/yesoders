@@ -41,16 +41,18 @@ getUserMentors uid =
                     )
 
 
-userForm :: User -> Form User
+userForm :: Text -> User -> Form User
 userForm ident user = renderSematnicUiDivs $ User
     <$> pure ident
     <*> pure (userEmail user)
-    <*> aopt textField "Full name" (userFullName <$> user)
-    <*> aopt textField "Description" (userDesc <$> user)
+    <*> aopt textField "Full name" Nothing -- (userFullName user)
+    <*> aopt textareaField "Description" Nothing -- (userDesc user)
     <*> pure (userAdmin user)
-    <*> areq (selectField optionsEnum) (selectSettings "Item") (userEmployment <$> user)
-    <*> aopt checkBoxField "Blocked"  (userBlocked <$> user)
-    <*> aopt checkBoxField "Public email"  (userEmailPublic <$> user)
+    <*> aopt (selectField optionsEnum) (selectSettings "Employment") Nothing -- (userEmployment user)
+    <*> pure True
+    <*> pure True
+    -- <*> aopt checkBoxField "Blocked"  (userBlocked <$> user)
+    -- <*> aopt checkBoxField "Public email"  (userEmailPublic <$> user)
     <*> lift (liftIO getCurrentTime)
     where
         selectSettings label =
