@@ -17,6 +17,9 @@
                         <img src="https://github.com/#{ident}.png?s=90">
                     <div class="content">
                         <a class="header">@#{userIdent user}
+                        $maybe desc <- userDesc user
+                            <p>#{desc}
+
 
         <div class="column">
             <div class="ui segment">
