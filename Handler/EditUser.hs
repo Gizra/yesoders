@@ -11,11 +11,11 @@ getEditUserR ident = do
 
 postEditUserR :: Text -> Handler Html
 postEditUserR ident = do
-    (Entity _ user) <- runDB . getBy404 $ UniqueUser ident
+    (Entity userId user) <- runDB . getBy404 $ UniqueUser ident
     ((result, widget), enctype) <- runFormPost $ userForm ident user
     case result of
         FormSuccess user' -> do
-            _ <- runDB $ insert user'
+            _ <- runDB $ replace userId user'
 
             setMessage "User saved"
             redirect $ UserR ident
@@ -32,15 +32,13 @@ userForm :: Text -> User -> Form User
 userForm ident user = renderSematnicUiDivs $ User
     <$> pure ident
     <*> pure (userEmail user)
-    <*> aopt textField "Full name" Nothing -- (userFullName user)
-    <*> aopt textareaField "Description" Nothing -- (userDesc user)
-    <*> pure (userAdmin user)
-    <*> aopt (selectField optionsEnum) (selectSettings "Employment") Nothing -- (userEmployment user)
-    <*> pure True
-    <*> pure True
-    -- <*> aopt checkBoxField "Blocked"  (userBlocked <$> user)
-    -- <*> aopt checkBoxField "Public email"  (userEmailPublic <$> user)
-    <*> lift (liftIO getCurrentTime)
+    <*> aopt textField "Full name" (Just $ userFullName user)
+    <*> aopt textareaField "Description" (Just $ userDesc user)
+    <*> areq checkBoxField "Admin"  (Just $ userAdmin user)
+    <*> aopt (selectField optionsEnum) (selectSettings "Employment") (Just $ userEmployment user)
+    <*> areq checkBoxField "Blocked"  (Just $ userBlocked user)
+    <*> areq checkBoxField "Public email"  (Just $ userEmailPublic user)
+    <*> pure (userCreated user)
     where
         selectSettings label =
             FieldSettings
