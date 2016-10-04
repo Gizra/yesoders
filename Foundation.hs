@@ -179,6 +179,7 @@ instance Yesod App where
     isAuthorized (UserR _) _ = return Authorized
 
     isAuthorized (AuthR LogoutR) _ = isAuthenticated
+    isAuthorized (EditUserR _ ) _ = isAuthenticated
     isAuthorized (AuthR _) _ = do
         mu <- maybeAuthId
         return $ case mu of
@@ -221,6 +222,25 @@ isAuthenticated = do
     return $ case mu of
         Nothing -> Unauthorized "You must login to access this page"
         Just _ -> Authorized
+
+isOwnerOrAdmin :: User -> Handler AuthResult
+isOwnerOrAdmin entity = do
+    mu <- maybeAuth
+    return $ case mu of
+        Nothing -> Unauthorized "You must login to access this page"
+        Just (Entity _ user) ->
+            if (userIdent user == userIdent entity)
+                then
+                    -- User is owner.
+                    Authorized
+                else
+                    -- Check user is admin.
+                    if (userAdmin user)
+                        then
+                            Authorized
+                        else
+                            Unauthorized "You must login to access this page"
+
 
 -- How to run database actions.
 instance YesodPersist App where
