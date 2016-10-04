@@ -39,27 +39,3 @@ getUserMentors uid =
                     ( user ^. UserId
                     , user ^. UserIdent
                     )
-
-
-userForm :: Text -> User -> Form User
-userForm ident user = renderSematnicUiDivs $ User
-    <$> pure ident
-    <*> pure (userEmail user)
-    <*> aopt textField "Full name" Nothing -- (userFullName user)
-    <*> aopt textareaField "Description" Nothing -- (userDesc user)
-    <*> pure (userAdmin user)
-    <*> aopt (selectField optionsEnum) (selectSettings "Employment") Nothing -- (userEmployment user)
-    <*> pure True
-    <*> pure True
-    -- <*> aopt checkBoxField "Blocked"  (userBlocked <$> user)
-    -- <*> aopt checkBoxField "Public email"  (userEmailPublic <$> user)
-    <*> lift (liftIO getCurrentTime)
-    where
-        selectSettings label =
-            FieldSettings
-                { fsLabel = label
-                , fsTooltip = Nothing
-                , fsId = Nothing
-                , fsName = Nothing
-                , fsAttrs = [("class", "ui fluid dropdown")]
-                }
