@@ -11,6 +11,13 @@ spec = withApp $ do
             get $ EditUserR "foo"
             statusIs 403
 
+        it "asserts non access to user edit for non owner" $ do
+            _ <- createUser "foo"
+            nonOwner <- createUser "bar"
+            authenticateAs nonOwner
+            get $ EditUserR "foo"
+            statusIs 403
+
         it "asserts access to user edit for owner" $ do
             user <- createUser "foo"
             authenticateAs user
