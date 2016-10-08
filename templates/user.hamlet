@@ -2,11 +2,8 @@
     <h1>
         #{userIdent user}
 
-    <div class="ui tabular menu">
-        <a class="item active" href="@{UserR ident}">
-            View
-        <a class="item" href="@{EditUserR ident}">
-            Edit
+    $maybe localTasks <- mlocalTasks
+        ^{localTasks}
 
 <div class="ui container">
     <div class="ui three column grid">
