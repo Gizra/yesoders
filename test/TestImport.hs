@@ -84,23 +84,29 @@ authenticateAs (Entity _ u) = do
 -- | Create an active user.
 createUser :: Text -> YesodExample App (Entity User)
 createUser ident = do
-    insertUser ident False
+    insertUser ident False False
 
 -- | Create a blocked user.
 createBlockedUser :: Text -> YesodExample App (Entity User)
 createBlockedUser ident =
-    insertUser ident True
+    insertUser ident True False
+
+-- | Create a blocked user.
+createAdminUser :: Text -> YesodExample App (Entity User)
+createAdminUser ident =
+    insertUser ident True True
+
 
 -- | Create a user.
-insertUser :: Text -> Bool -> YesodExample App (Entity User)
-insertUser ident isBlocked = do
+insertUser :: Text -> Bool -> Bool -> YesodExample App (Entity User)
+insertUser ident isBlocked isAdmin = do
     currentTime <- liftIO getCurrentTime
     runDB $ insertEntity User
         { userIdent = ident
         , userEmail = ident ++ ("@example.com" :: Text)
         , userFullName = Nothing
         , userDesc = Nothing
-        , userAdmin = False
+        , userAdmin = isAdmin
         , userEmployment = NotLooking
         , userBlocked = isBlocked
         , userEmailPublic = False

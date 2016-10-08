@@ -11,6 +11,19 @@ spec = withApp $ do
             get $ EditUserR "foo"
             statusIs 403
 
+        it "asserts access to user edit for owner" $ do
+            user <- createUser "foo"
+            authenticateAs user
+            get $ EditUserR "foo"
+            statusIs 200
+
+        it "asserts access to user edit for admin user" $ do
+            _ <- createUser "foo"
+            adminUser <- createAdminUser "bar"
+            authenticateAs adminUser
+            get $ EditUserR "foo"
+            statusIs 200
+
     --
     -- describe "postEditUserR" $ do
     --     error "Spec not implemented: postEditUserR"
