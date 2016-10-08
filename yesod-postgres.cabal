@@ -28,6 +28,7 @@ library
                      Handler.Sitemap
                      Handler.User
                      Utils.Flag
+                     Utils.LocalTasks
 
 
     if flag(dev) || flag(library-only)

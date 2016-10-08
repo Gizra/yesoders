@@ -2,11 +2,8 @@
     <h1>
         #{userIdent user}
 
-    <div class="ui tabular menu">
-        <a class="item" href="@{UserR ident}">
-            View
-        <a class="item active" href="@{EditUserR ident}">
-            Edit
+    $maybe localTasks <- mlocalTasks
+        ^{localTasks}
 
     <form class="ui form" method=post action=@{EditUserR ident} enctype=#{enctype}>
         ^{widget}

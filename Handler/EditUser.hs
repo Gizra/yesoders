@@ -2,12 +2,18 @@ module Handler.EditUser where
 
 import Import
 import Model.Types
+import Utils.LocalTasks
 
 getEditUserR :: Text -> Handler Html
 getEditUserR ident = do
     (Entity _ user) <- runDB . getBy404 $ UniqueUser ident
 
     mcurrentUser <- maybeAuth
+
+    mlocalTasks <- getLocalTasksWidget
+            [ ("View", UserR ident)
+            , ("Edit", EditUserR ident)
+            ]
 
     (widget, enctype) <- generateFormPost $ userForm ident user mcurrentUser
     defaultLayout $(widgetFile "user-update")
