@@ -118,6 +118,7 @@ test-suite test
     main-is:           Spec.hs
     other-modules:     Handler.BreadcrumbsSpec
                        Handler.CommonSpec
+                       Handler.EditUserSpec
                        Handler.HomeSpec
                        Handler.ProfileSpec
                        TestImport
