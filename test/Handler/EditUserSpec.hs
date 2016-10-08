@@ -23,7 +23,3 @@ spec = withApp $ do
             authenticateAs adminUser
             get $ EditUserR "foo"
             statusIs 200
-
-    --
-    -- describe "postEditUserR" $ do
-    --     error "Spec not implemented: postEditUserR"
