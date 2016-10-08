@@ -6,9 +6,8 @@ spec :: Spec
 spec = withApp $ do
 
     describe "getEditUserR" $ do
-
         it "asserts no access to user edit for anonymous users" $ do
-            user <- createUser "foo"
+            _ <- createUser "foo"
             get $ EditUserR "foo"
             statusIs 403
 
