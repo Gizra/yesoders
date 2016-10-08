@@ -10,7 +10,10 @@ getLocalTasksWidget routes = do
 
     -- Keep only accessible routes.
     accessibleRoutes <- getAccessibleRoutes routes
-    if null accessibleRoutes
+    if length accessibleRoutes <= 1
+        -- There is no accessible route, or there is only a single allowed
+        -- accessible item, so no need it show the tabs, as it's the only
+        -- option.
         then return Nothing
         else return $ Just $ do
             toWidget [whamlet|
