@@ -17,6 +17,7 @@ import qualified Data.CaseInsensitive as CI
 import qualified Data.Text.Encoding as TE
 import qualified Data.Char as C (isSpace, toUpper, toLower)
 import Data.Time
+import Model.Types
 
 -- | The foundation datatype for your application. This can be a good place to
 -- keep settings and values requiring initialization before your application
@@ -179,6 +180,7 @@ instance Yesod App where
     isAuthorized (UserR _) _ = return Authorized
 
     isAuthorized (AuthR LogoutR) _ = isAuthenticated
+    isAuthorized (UserUpdateR ident ) _ = isOwnerOrAdmin ident
     isAuthorized (AuthR _) _ = do
         mu <- maybeAuthId
         return $ case mu of
@@ -221,6 +223,26 @@ isAuthenticated = do
     return $ case mu of
         Nothing -> Unauthorized "You must login to access this page"
         Just _ -> Authorized
+
+isOwnerOrAdmin :: Text -> Handler AuthResult
+isOwnerOrAdmin ident = do
+    (Entity _ entity) <- runDB . getBy404 $ UniqueUser ident
+    mu <- maybeAuth
+    return $ case mu of
+        Nothing -> Unauthorized "You must login to access this page"
+        Just (Entity _ user) ->
+            if (userIdent user == userIdent entity)
+                then
+                    -- User is owner.
+                    Authorized
+                else
+                    -- Check user is admin.
+                    if (userAdmin user)
+                        then
+                            Authorized
+                        else
+                            Unauthorized "You must login to access this page"
+
 
 -- How to run database actions.
 instance YesodPersist App where
@@ -268,7 +290,7 @@ instance YesodAuth App where
                     , userFullName = fullName
                     , userDesc = Nothing
                     , userAdmin = False
-                    , userEmployment = Nothing
+                    , userEmployment = NotLooking
                     , userBlocked = False
                     , userEmailPublic = False
                     , userCreated = currentTime
@@ -369,3 +391,29 @@ humanReadableTimeDiff curTime oldTime =
               | weeks d < 5    = i2s (weeks d)  ++ " weeks ago"
               | years d < 1    = thisYear
               | otherwise      = previousYears
+
+
+-- @todo: Move to Utils.
+
+-- Adaptation of renderDivs.
+renderSematnicUiDivs :: Monad m => FormRender m a
+renderSematnicUiDivs = renderSematnicUiDivsMaybeLabels True
+
+-- Only difference here is that we add a ".field" class on the wrapper div.
+renderSematnicUiDivsMaybeLabels :: Monad m => Bool -> FormRender m a
+renderSematnicUiDivsMaybeLabels withLabels aform fragment = do
+    (res, views') <- aFormToForm aform
+    let views = views' []
+    let widget = [whamlet|$newline never
+\#{fragment}
+$forall view <- views
+    <div.field :fvRequired view:.required :not $ fvRequired view:.optional>
+        $if withLabels
+            <label for=#{fvId view}>#{fvLabel view}
+        $maybe tt <- fvTooltip view
+            <div .tooltip>#{tt}
+        ^{fvInput view}
+        $maybe err <- fvErrors view
+            <div .errors>#{err}
+    |]
+    return (res, widget)

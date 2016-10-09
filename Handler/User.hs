@@ -1,10 +1,11 @@
 module Handler.User where
 
-import Import
+import           Import
 
+import           Database.Esqueleto ((&&.), (?.), (^.))
 import qualified Database.Esqueleto as E
-import           Database.Esqueleto       ((^.), (?.), (&&.))
-import           Utils.Flag               (getFlagWidget)
+import           Utils.Flag         (getFlagWidget)
+import           Utils.LocalTasks
 
 getProfileR :: Handler Html
 getProfileR = do
@@ -18,6 +19,11 @@ getUserR ident = do
     let memberFor = humanReadableTimeDiff currentTime (userCreated user)
 
     muid <- maybeAuthId
+
+    mlocalTasks <- getLocalTasksWidget
+            [ ("View", UserR ident)
+            , ("Edit", UserUpdateR ident)
+            ]
 
     mflagWidget <- getFlagWidget muid userId UniqueFlagMentor
 

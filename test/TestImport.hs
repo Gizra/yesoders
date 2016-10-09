@@ -9,6 +9,7 @@ import Database.Persist      as X hiding (get)
 import Database.Persist.Sql  (SqlPersistM, SqlBackend, runSqlPersistMPool, rawExecute, rawSql, unSingle, connEscapeName)
 import Foundation            as X
 import Model                 as X
+import Model.Types           as X
 import Settings              as X
 import Test.Hspec            as X
 import Text.Shakespeare.Text (st)
@@ -83,24 +84,30 @@ authenticateAs (Entity _ u) = do
 -- | Create an active user.
 createUser :: Text -> YesodExample App (Entity User)
 createUser ident = do
-    insertUser ident False
+    insertUser ident False False
 
 -- | Create a blocked user.
 createBlockedUser :: Text -> YesodExample App (Entity User)
 createBlockedUser ident =
-    insertUser ident True
+    insertUser ident True False
+
+-- | Create a blocked user.
+createAdminUser :: Text -> YesodExample App (Entity User)
+createAdminUser ident =
+    insertUser ident True True
+
 
 -- | Create a user.
-insertUser :: Text -> Bool -> YesodExample App (Entity User)
-insertUser ident isBlocked = do
+insertUser :: Text -> Bool -> Bool -> YesodExample App (Entity User)
+insertUser ident isBlocked isAdmin = do
     currentTime <- liftIO getCurrentTime
     runDB $ insertEntity User
         { userIdent = ident
         , userEmail = ident ++ ("@example.com" :: Text)
         , userFullName = Nothing
         , userDesc = Nothing
-        , userAdmin = False
-        , userEmployment = Nothing
+        , userAdmin = isAdmin
+        , userEmployment = NotLooking
         , userBlocked = isBlocked
         , userEmailPublic = False
         , userCreated = currentTime

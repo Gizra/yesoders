@@ -22,11 +22,13 @@ library
                      Settings
                      Settings.StaticFiles
                      Handler.Common
+                     Handler.UserUpdate
                      Handler.FlagMentor
                      Handler.Home
                      Handler.Sitemap
                      Handler.User
                      Utils.Flag
+                     Utils.LocalTasks
 
 
     if flag(dev) || flag(library-only)
@@ -116,6 +118,7 @@ test-suite test
     main-is:           Spec.hs
     other-modules:     Handler.BreadcrumbsSpec
                        Handler.CommonSpec
+                       Handler.UserUpdateSpec
                        Handler.HomeSpec
                        Handler.ProfileSpec
                        TestImport

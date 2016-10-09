@@ -1,0 +1,10 @@
+<div class="ui container">
+    <h1>
+        #{userIdent user}
+
+    $maybe localTasks <- mlocalTasks
+        ^{localTasks}
+
+    <form class="ui form" method=post action=@{UserUpdateR ident} enctype=#{enctype}>
+        ^{widget}
+        <button.ui.primary.button>Update
