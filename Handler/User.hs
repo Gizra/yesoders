@@ -22,7 +22,7 @@ getUserR ident = do
 
     mlocalTasks <- getLocalTasksWidget
             [ ("View", UserR ident)
-            , ("Edit", EditUserR ident)
+            , ("Edit", UserUpdateR ident)
             ]
 
     mflagWidget <- getFlagWidget muid userId UniqueFlagMentor

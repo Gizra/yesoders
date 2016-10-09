@@ -4,22 +4,22 @@ import Import
 import Model.Types
 import Utils.LocalTasks
 
-getEditUserR :: Text -> Handler Html
-getEditUserR ident = do
+getUserUpdateR :: Text -> Handler Html
+getUserUpdateR ident = do
     (Entity _ user) <- runDB . getBy404 $ UniqueUser ident
 
     mcurrentUser <- maybeAuth
 
     mlocalTasks <- getLocalTasksWidget
             [ ("View", UserR ident)
-            , ("Edit", EditUserR ident)
+            , ("Edit", UserUpdateR ident)
             ]
 
     (widget, enctype) <- generateFormPost $ userForm ident user mcurrentUser
     defaultLayout $(widgetFile "user-update")
 
-postEditUserR :: Text -> Handler Html
-postEditUserR ident = do
+postUserUpdateR :: Text -> Handler Html
+postUserUpdateR ident = do
     (Entity userId user) <- runDB . getBy404 $ UniqueUser ident
 
     mcurrentUser <- maybeAuth
@@ -34,7 +34,7 @@ postEditUserR ident = do
         _ -> defaultLayout
             [whamlet|
                 <p>Invalid input, let's try again.
-                <form method=post action=@{EditUserR ident} enctype=#{enctype}>
+                <form method=post action=@{UserUpdateR ident} enctype=#{enctype}>
                     ^{widget}
                     <button>Submit
             |]

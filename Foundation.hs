@@ -180,7 +180,7 @@ instance Yesod App where
     isAuthorized (UserR _) _ = return Authorized
 
     isAuthorized (AuthR LogoutR) _ = isAuthenticated
-    isAuthorized (EditUserR ident ) _ = isOwnerOrAdmin ident
+    isAuthorized (UserUpdateR ident ) _ = isOwnerOrAdmin ident
     isAuthorized (AuthR _) _ = do
         mu <- maybeAuthId
         return $ case mu of

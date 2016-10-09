@@ -9,7 +9,7 @@
 /profile ProfileR GET
 
 /user/#Text UserR GET
-/user/#Text/edit EditUserR GET POST
+/user/#Text/edit UserUpdateR GET POST
 
 /flag/mentor/#UserId/#FlagAction/#Text FlagMentorR GET
 
