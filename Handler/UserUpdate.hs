@@ -1,4 +1,4 @@
-module Handler.EditUser where
+module Handler.UserUpdate where
 
 import Import
 import Model.Types

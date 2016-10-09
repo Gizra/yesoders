@@ -22,7 +22,7 @@ library
                      Settings
                      Settings.StaticFiles
                      Handler.Common
-                     Handler.EditUser
+                     Handler.UserUpdate
                      Handler.FlagMentor
                      Handler.Home
                      Handler.Sitemap
@@ -118,7 +118,7 @@ test-suite test
     main-is:           Spec.hs
     other-modules:     Handler.BreadcrumbsSpec
                        Handler.CommonSpec
-                       Handler.EditUserSpec
+                       Handler.UserUpdateSpec
                        Handler.HomeSpec
                        Handler.ProfileSpec
                        TestImport

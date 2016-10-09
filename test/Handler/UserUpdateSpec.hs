@@ -1,4 +1,4 @@
-module Handler.EditUserSpec (spec) where
+module Handler.UserUpdateSpec (spec) where
 
 import           TestImport
 
