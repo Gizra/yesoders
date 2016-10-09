@@ -25,8 +25,9 @@ getLocalTasksWidget routes = do
 getAccessibleRoutes :: [(Text, Route App)] -> Handler [(Text, Route App)]
 getAccessibleRoutes [] = return []
 getAccessibleRoutes (x : xs) = do
-        isAuth <- isAuthorized (snd x) False
+        writeRequest <- isWriteRequest (snd x)
+        auth <- isAuthorized (snd x) writeRequest
         result <- getAccessibleRoutes xs
-        return $ case isAuth of
+        return $ case auth of
             Authorized -> x : result
             _ -> result
