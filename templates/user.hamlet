@@ -21,6 +21,9 @@
                 <div>
                     Members since: #{memberFor}
 
+                <div>
+                    Employment status: #{employmentStatus}
+
                 $maybe flagWidget <- mflagWidget
                     <div>
                         ^{flagWidget}
