@@ -15,6 +15,7 @@ import Test.Hspec            as X
 import Text.Shakespeare.Text (st)
 import Yesod.Auth            as X
 import Yesod.Default.Config2 (useEnv, loadYamlSettings)
+import Yesod.Form.Fields     as X (Textarea (..))
 import Yesod.Test            as X
 
 import qualified Data.ByteString.Lazy.Char8 as BSL8
@@ -105,7 +106,7 @@ insertUser ident isBlocked isAdmin = do
         { userIdent = ident
         , userEmail = ident ++ ("@example.com" :: Text)
         , userFullName = Nothing
-        , userDesc = Nothing
+        , userDesc = Just $ Textarea ("user description of " ++ ident)
         , userAdmin = isAdmin
         , userEmployment = NotLooking
         , userBlocked = isBlocked

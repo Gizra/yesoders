@@ -163,3 +163,4 @@ test-suite test
                  , HUnit
                  , text
                  , wai-extra
+                 , yesod-form

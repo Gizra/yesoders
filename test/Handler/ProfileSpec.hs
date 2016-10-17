@@ -29,3 +29,6 @@ spec = withApp $ do
 
         -- User's employment status
         htmlAnyContain "div" "I am not currently seeking employment or employees"
+
+        -- Description.
+        htmlAnyContain "div" "user description of bar"
