@@ -1,6 +1,6 @@
 module Handler.ProfileSpec (spec) where
 
-import TestImport
+import           TestImport
 
 spec :: Spec
 spec = withApp $ do
@@ -26,3 +26,6 @@ spec = withApp $ do
 
         -- User's GitHub name
         htmlAnyContain "a.header" . unpack $ userIdent u
+
+        -- User's employment status
+        htmlAnyContain "div" "I am not currently seeking employment or employees"
