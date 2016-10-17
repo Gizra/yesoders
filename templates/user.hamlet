@@ -6,7 +6,7 @@
         ^{localTasks}
 
 <div class="ui container">
-    <div class="ui three column grid">
+    <div class="ui two column grid">
         <div class="column">
             <div class="ui segment">
                 <div class="ui card">
@@ -17,8 +17,6 @@
                         $maybe desc <- userDesc user
                             <p>#{desc}
 
-
-        <div class="column">
             <div class="ui segment">
                 <div>
                     Members since: #{memberFor}
