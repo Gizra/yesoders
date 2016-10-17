@@ -2,8 +2,9 @@ module Handler.User where
 
 import           Import
 
-import           Database.Esqueleto ((&&.), (?.), (^.))
+import           Database.Esqueleto ((^.))
 import qualified Database.Esqueleto as E
+import           Model.Types
 import           Utils.Flag         (getFlagWidget)
 import           Utils.LocalTasks
 
@@ -28,6 +29,8 @@ getUserR ident = do
     mflagWidget <- getFlagWidget muid userId UniqueFlagMentor
 
     mentors <- getUserMentors userId
+
+    let employmentStatus = pack . prettyEmployment $ userEmployment user :: Text
 
     defaultLayout $ do
         setTitle . toHtml $ userIdent user `mappend` "'s User page"
