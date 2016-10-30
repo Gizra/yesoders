@@ -10,8 +10,8 @@ import           Utils.LocalTasks
 
 getProfileR :: Handler Html
 getProfileR = do
-    (userId, user) <- requireAuthPair
-    getUserR (userIdent user)
+    (_, user) <- requireAuthPair
+    redirect $ UserR (userIdent user)
 
 getUserR :: Text -> Handler Html
 getUserR ident = do

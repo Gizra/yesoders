@@ -8,19 +8,28 @@ spec = withApp $ do
         get ProfileR
         statusIs 403
 
-    it "asserts access to my-account for authenticated users" $ do
+    it "asserts redirect to my-account for authenticated users" $ do
         user <- createUser "foo"
         authenticateAs user
 
         get ProfileR
+        statusIs 303
+
+    it "asserts access to my-account for authenticated users" $ do
+        user <- createUser "foo"
+        authenticateAs user
+
+        let (Entity _ u) = user
+        get $ UserR (userIdent u)
         statusIs 200
 
     it "asserts shows user's information" $ do
         user <- createUser "bar"
         authenticateAs user
 
-        get ProfileR
         let (Entity _ u) = user
+        get $ UserR (userIdent u)
+
         -- Member for
         htmlAnyContain ".ui.segment div" "Members since"
 
