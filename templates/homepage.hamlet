@@ -15,7 +15,7 @@
     <div class="ui five stackable cards">
         $forall Entity _ user  <- users
             <div class="card">
-                <div class="image">
+                <a class="image" href="@{UserR $ userIdent user}">
                     <img src="https://github.com/#{userIdent user}.png?size=200">
 
                 <div class="content">
