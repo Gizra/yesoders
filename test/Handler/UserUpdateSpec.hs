@@ -29,4 +29,14 @@ spec = withApp $ do
             adminUser <- createAdminUser "bar"
             authenticateAs adminUser
             get $ UserUpdateR "foo"
+
             statusIs 200
+            htmlAnyContain ".ui.form .field label" "Admin"
+
+        it "asserts admin user cannot uncheck admin own rights" $ do
+            adminUser <- createAdminUser "bar"
+            authenticateAs adminUser
+            get $ UserUpdateR "bar"
+
+            statusIs 200
+            bodyNotContains "Admin"
