@@ -2,6 +2,10 @@
     <h1>
         #{userIdent user}
 
+        $if (userAdmin user)
+            <span class="ui blue horizontal label">
+                Admin
+
     $maybe localTasks <- mlocalTasks
         ^{localTasks}
 

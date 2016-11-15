@@ -58,7 +58,12 @@ userForm ident user mcurrentUser = renderSematnicUiDivs $ User
                 Just (Entity _ currentUser) ->
                         if (userAdmin currentUser)
                             then
-                                field
+                                -- Don't allow user to remove own admin rights.
+                                if (userIdent currentUser == userIdent user)
+                                    then
+                                        pure val
+                                    else
+                                        field
                             else
                                 pure val
 
